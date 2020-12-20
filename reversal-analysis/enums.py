@@ -20,7 +20,3 @@ class Col(str, Enum):
 class Broker(str, Enum):
     PEPPER = 'pepper'
     XM = 'xm'
-
-pointSize = {
-    Quote.AUDCAD: 0.00001
-}

@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+from enums import Quote
 
 def plot_histogram_unblock(sample_data):
     plt.figure()
@@ -24,3 +25,13 @@ def show_plot():
 
 def avg(l):
     return sum(l)/len(l)
+
+__point_size_of = {
+        Quote.AUDCAD: 0.00001
+    }
+
+def point_size(quote:Quote):
+    return __point_size_of[quote]
+
+def pip_size(quote:Quote):
+    return point_size(quote)*10

@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import numpy
 import talib
 
-from enums import Timeframe, Quote, Col, Broker, pointSize
+from enums import Timeframe, Quote, Col, Broker
 import loader
 import utils
 
@@ -47,7 +47,7 @@ def analyse_rsi_reversal(timeframe:Timeframe, quote:Quote, broker:Broker=None, l
 
         current_close = close_series[i]
         future_close = close_series[i+FUTURE_PERIOD]
-        future_change_points = (future_close - current_close)/pointSize[quote]
+        future_change_points = (future_close - current_close)/utils.point_size(quote)
 
         if current_rsi >= OVER_THRESH:
             over_future_changes.append(future_change_points)
