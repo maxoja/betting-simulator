@@ -15,7 +15,7 @@ def plot_lines_unblock(list_of_lines, h_lines=[]):
 
 def plot_histogram_unblock(sample_data):
     plt.figure()
-    plt.hist(sample_data, bins=256)
+    plt.hist(sample_data, bins=config.VISUAL_N_BINS)
     plt.show(block=False)
 
 if __name__ == '__main__':
