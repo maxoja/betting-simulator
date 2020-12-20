@@ -1,6 +1,7 @@
+from random import random
+from functools import reduce
 import matplotlib.pyplot as plt
 import config
-from random import random
 
 def bet(odds):
     return odds >= random()
@@ -16,6 +17,15 @@ def plot_lines_unblock(list_of_lines, h_lines=[]):
 def plot_histogram_unblock(sample_data):
     plt.figure()
     plt.hist(sample_data, bins=config.VISUAL_N_BINS)
+    plt.show(block=False)
+
+def plot_centered_cumulative_histogram(sample_data, center_val):
+    sample_data = sorted(sample_data)
+    mean_index = min(range(len(sample_data)), key=lambda i: abs(center_val-sample_data[i]))
+    count_y = [abs(mean_index-i) for i,val in enumerate(sample_data)]
+    count_x = sample_data[::]
+    plt.figure()
+    plt.plot(count_x, count_y)
     plt.show(block=False)
 
 if __name__ == '__main__':
@@ -40,6 +50,7 @@ if __name__ == '__main__':
 
     plot_lines_unblock(simulation_results, config.THRESHOLDS)
     plot_histogram_unblock(final_balances)
+    plot_centered_cumulative_histogram(final_balances, center_val=config.INITIAL_CAPITAL)
     plt.show()
 
 
