@@ -1,10 +1,10 @@
-import matplotlib.pyplot as plt
 import numpy
 import talib
 
 from ..base.enums import Timeframe, Quote, Col, Broker
 from ..base import loader
 from ..base import utils
+from ..base import plotting
 
 
 def analyse_spread(timeframe:Timeframe, quote:Quote, broker:Broker):
@@ -61,11 +61,11 @@ def analyse_rsi_reversal(timeframe:Timeframe, quote:Quote, broker:Broker=None, l
         print('weighted  ', total_over+total_under, utils.avg(list(map(lambda x: -x, over_future_changes)) + under_future_changes) )
     
     if plot:
-        utils.plot_histogram_unblock(over_future_changes)
-        utils.plot_histogram_unblock(under_future_changes)
-        utils.plot_centered_cumulative_histogram(over_future_changes)
-        utils.plot_centered_cumulative_histogram(under_future_changes)
-        plt.show()
+        plotting.plot_histogram_unblock(over_future_changes)
+        plotting.plot_histogram_unblock(under_future_changes)
+        plotting.plot_centered_cumulative_histogram(over_future_changes)
+        plotting.plot_centered_cumulative_histogram(under_future_changes)
+        plotting.show_plot()
     
     
 def main():
