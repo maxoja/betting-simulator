@@ -1,5 +1,9 @@
 import matplotlib.pyplot as plt
-from .enums import Quote
+from .enums import Quote, Col
+
+def average_spread(df):
+    series = df[Col.SPREAD]
+    return sum(series)/len(series)
 
 def plot_histogram_unblock(sample_data):
     plt.figure()

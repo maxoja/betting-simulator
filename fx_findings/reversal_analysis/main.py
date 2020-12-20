@@ -6,22 +6,19 @@ from ..base.enums import Timeframe, Quote, Col, Broker
 from ..base import loader
 from ..base import utils
 
-def average_spread(df):
-    series = df[Col.SPREAD]
-    return sum(series)/len(series)
-
 
 def analyse_spread(timeframe:Timeframe, quote:Quote, broker:Broker):
     df = loader.load(timeframe, quote)
-    tickstory_spread = average_spread(df)
+    tickstory_spread = utils.average_spread(df)
     tickstory_len = len(df)
 
     df = loader.load(timeframe, quote, broker)
-    broker_spread = average_spread(df)
+    broker_spread = utils.average_spread(df)
     broker_len = len(df)
 
     print('tickstory', '----------', tickstory_len, tickstory_spread)
     print('broker   ', f'{broker:10s}', broker_len, broker_spread)
+
 
 def analyse_rsi_reversal(timeframe:Timeframe, quote:Quote, broker:Broker=None, limit=None, shift=0, plot=True):
     RSI_PERIOD = 14
