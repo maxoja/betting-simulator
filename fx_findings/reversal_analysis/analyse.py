@@ -6,15 +6,13 @@ from ..base import loader
 from ..base import utils
 from ..base import plotting
 
-def analyse_rsi_reversal(timeframe:Timeframe, quote:Quote, broker:Broker=None, limit=None, shift=0, plot=True):
-    RSI_PERIOD = 14
-    OVER_THRESH = 70
-    UNDER_THRESH = 30
-    FUTURE_PERIOD = 2
+RSI_PERIOD = 14
+OVER_THRESH = 70
+UNDER_THRESH = 30
+FUTURE_PERIOD = 2
+
+def analyse_rsi_reversal(df, quote, plot=True):
     
-    df = loader.load(timeframe, quote, broker)
-    if not limit is None:
-        df = df[(-limit-RSI_PERIOD-shift):len(df)-shift]
     close_series = df[Col.CLOSE].reset_index(drop=True)
     rsi_series = talib.RSI(close_series, RSI_PERIOD)
     
@@ -55,12 +53,21 @@ def analyse_rsi_reversal(timeframe:Timeframe, quote:Quote, broker:Broker=None, l
     
     
 def run():
-    analyse_rsi_reversal(Timeframe.D1, Quote.AUDCAD)
-    # for i in range(10):
-    #     analyse_rsi_reversal(Timeframe.D1, Quote.AUDCAD, limit=180, shift=180*i, plot=False)
-    #     print('-'*10)
-    # print('===========')
-    # for i in range(10):
-    #     analyse_rsi_reversal(Timeframe.H4, Quote.AUDCAD, limit=60*6, shift=60*i*6, plot=False)
-    #     print('-'*10)
+    quote = Quote.AUDCAD
+    df = loader.load(Timeframe.D1, quote)
+    analyse_rsi_reversal(df, quote)
+    exit()
+    for i in range(10):
+        sliced_df = utils.slice_frame(df, 180, shift=180*i, buffer=RSI_PERIOD)
+        if sliced_df is None:
+            break
+        analyse_rsi_reversal(sliced_df, quote, plot=False)
+        print('-'*10)
+    print('===========')
+    for i in range(10):
+        sliced_df = utils.slice_frame(df, 60*6, shift=60*6*i, buffer=RSI_PERIOD)
+        if sliced_df is None:
+            break
+        analyse_rsi_reversal(sliced_df, quote, plot=False)
+        print('-'*10)
 
