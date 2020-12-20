@@ -1,3 +1,5 @@
-from fx_findings.reversal_analysis import main
+from fx_findings import reversal_analysis
+from fx_findings import spread_analysis
 
-main.main()
+# reversal_analysis.run()
+spread_analysis.run()

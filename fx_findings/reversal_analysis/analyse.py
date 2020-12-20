@@ -6,20 +6,6 @@ from ..base import loader
 from ..base import utils
 from ..base import plotting
 
-
-def analyse_spread(timeframe:Timeframe, quote:Quote, broker:Broker):
-    df = loader.load(timeframe, quote)
-    tickstory_spread = utils.average_spread(df)
-    tickstory_len = len(df)
-
-    df = loader.load(timeframe, quote, broker)
-    broker_spread = utils.average_spread(df)
-    broker_len = len(df)
-
-    print('tickstory', '----------', tickstory_len, tickstory_spread)
-    print('broker   ', f'{broker:10s}', broker_len, broker_spread)
-
-
 def analyse_rsi_reversal(timeframe:Timeframe, quote:Quote, broker:Broker=None, limit=None, shift=0, plot=True):
     RSI_PERIOD = 14
     OVER_THRESH = 70
@@ -68,8 +54,7 @@ def analyse_rsi_reversal(timeframe:Timeframe, quote:Quote, broker:Broker=None, l
         plotting.show_plot()
     
     
-def main():
-    # analyse_spread(Timeframe.H1, Quote.AUDCAD, Broker.XM)
+def run():
     analyse_rsi_reversal(Timeframe.D1, Quote.AUDCAD)
     # for i in range(10):
     #     analyse_rsi_reversal(Timeframe.D1, Quote.AUDCAD, limit=180, shift=180*i, plot=False)
