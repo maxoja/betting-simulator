@@ -2,9 +2,9 @@ import matplotlib.pyplot as plt
 import numpy
 import talib
 
-from enums import Timeframe, Quote, Col, Broker
-import loader
-import utils
+from ..base.enums import Timeframe, Quote, Col, Broker
+from ..base import loader
+from ..base import utils
 
 def average_spread(df):
     series = df[Col.SPREAD]
@@ -71,7 +71,7 @@ def analyse_rsi_reversal(timeframe:Timeframe, quote:Quote, broker:Broker=None, l
         plt.show()
     
     
-if __name__ == '__main__':
+def main():
     # analyse_spread(Timeframe.H1, Quote.AUDCAD, Broker.XM)
     analyse_rsi_reversal(Timeframe.D1, Quote.AUDCAD)
     # for i in range(10):

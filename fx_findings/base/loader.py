@@ -1,6 +1,6 @@
 import os
 import pandas
-from enums import Timeframe, Quote, Broker
+from .enums import Timeframe, Quote, Broker
 
 def load(timeframe:Timeframe, quote:Quote, broker:Broker=None):
     directory = f'data/{timeframe}/{quote}'

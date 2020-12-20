@@ -1,5 +1,5 @@
 import matplotlib.pyplot as plt
-from enums import Quote
+from .enums import Quote
 
 def plot_histogram_unblock(sample_data):
     plt.figure()
