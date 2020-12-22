@@ -6,15 +6,28 @@ from ..base import loader
 from ..base import utils
 from ..base import plotting
 
+OUTPUT_DIR = './out/rsi_reversal/'
 RSI_PERIOD = 14
 OVER_THRESH = 70
 UNDER_THRESH = 30
 FUTURE_PERIOD = 2
 
-def analyse_rsi_reversal(df, quote, plot=True):
+class Config:
+    def __init__(self, quote, timeframe, rsi_period, padding_thresh, future_window):
+        self.quote = quote
+        self.timeframe = timeframe
+        self.rsi_period = rsi_period
+        self.padding_thresh = padding_thresh
+        self.future_window = future_window
+
+    def as_str(self):
+        return f'quote={self.quote}|timeframe={self.timeframe}|rsi_period={self.rsi_period}|padding={self.padding_thresh}|future_win={self.future_window}'
+
+
+def analyse_rsi_reversal(df, config:Config, plot=True):
     
     close_series = df[Col.CLOSE].reset_index(drop=True)
-    rsi_series = talib.RSI(close_series, RSI_PERIOD)
+    rsi_series = talib.RSI(close_series, config.rsi_period)
     
     over_future_changes = []
     under_future_changes = []
@@ -23,20 +36,25 @@ def analyse_rsi_reversal(df, quote, plot=True):
 
         if numpy.isnan(current_rsi):
             continue
-        if len(rsi_series) - i <= FUTURE_PERIOD:
+        if len(rsi_series) - i <= config.future_window:
             continue
 
         current_close = close_series[i]
-        future_close = close_series[i+FUTURE_PERIOD]
-        future_change_points = (future_close - current_close)/utils.point_size(quote)
+        future_close = close_series[i+config.future_window]
+        future_change_points = (future_close - current_close)/utils.point_size(config.quote)
 
-        if current_rsi >= OVER_THRESH:
+        if current_rsi >= 100-config.padding_thresh:
             over_future_changes.append(future_change_points)
-        if current_rsi <= UNDER_THRESH:
+        if current_rsi <= config.padding_thresh:
             under_future_changes.append(future_change_points)
 
+    n_bars = len(close_series)-config.rsi_period
+    n_years = n_bars/utils.annual_bars(config.timeframe)
     total_over = len(over_future_changes)
     total_under = len(under_future_changes)
+
+    print(config.as_str())
+    print('# Bars', n_bars, f'# Years {n_years:.2f}')
     if total_over > 0:
         print('overbought', total_over, utils.avg(over_future_changes))
     if total_under > 0:
@@ -53,21 +71,9 @@ def analyse_rsi_reversal(df, quote, plot=True):
     
     
 def run():
-    quote = Quote.AUDCAD
-    df = loader.load(Timeframe.D1, quote)
-    analyse_rsi_reversal(df, quote)
-    exit()
-    for i in range(10):
-        sliced_df = utils.slice_frame(df, 180, shift=180*i, buffer=RSI_PERIOD)
-        if sliced_df is None:
-            break
-        analyse_rsi_reversal(sliced_df, quote, plot=False)
-        print('-'*10)
-    print('===========')
-    for i in range(10):
-        sliced_df = utils.slice_frame(df, 60*6, shift=60*6*i, buffer=RSI_PERIOD)
-        if sliced_df is None:
-            break
-        analyse_rsi_reversal(sliced_df, quote, plot=False)
-        print('-'*10)
-
+    for padding in [26,28,30,32,34]:
+        for future_win in [1,2,3]:
+            conf = Config(Quote.AUDCAD, Timeframe.D1, 14, padding, future_win)
+            df = loader.load(conf.timeframe, conf.quote)
+            analyse_rsi_reversal(df, conf, plot=False)
+            print()
