@@ -71,9 +71,14 @@ def analyse_rsi_reversal(df, config:Config, plot=True):
     
     
 def run():
-    for padding in [26,28,30,32,34]:
-        for future_win in [1,2,3]:
-            conf = Config(Quote.AUDCAD, Timeframe.D1, 14, padding, future_win)
-            df = loader.load(conf.timeframe, conf.quote)
-            analyse_rsi_reversal(df, conf, plot=False)
-            print()
+    PARAM_PERIOD = [14]
+    PARAM_FUTURE_WIN = [1,2,3]
+    PARAM_PADDING = [26,28,30,32,34]
+
+    for period in PARAM_PERIOD:
+        for padding in PARAM_PADDING:
+            for future_win in PARAM_FUTURE_WIN:
+                conf = Config(Quote.AUDCAD, Timeframe.D1, period, padding, future_win)
+                df = loader.load(conf.timeframe, conf.quote)
+                analyse_rsi_reversal(df, conf, plot=False)
+                print()
