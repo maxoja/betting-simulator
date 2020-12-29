@@ -41,18 +41,22 @@ __annual_bars_of = {
 }
 
 class IndexRange(tuple):
-    def __init__(start, exclusive_end):
-        super().__init__([start exclusive_end])
+    def __init__(self, start:int, exclusive_end:int):
+        super().__init__([start, exclusive_end])
 
     def sliced_of(self, l):
         l[self[0]:self[1]]
 
 class Index:
-    def __init__(irange:IndexRange, local_index:int):
+    def __init__(self, irange:IndexRange, local_index:int):
         self.local = local_index
-        self.global = irange[0] + local_index
+        if irange:
+            self.glob = irange[0] + local_index
+        else:
+            self.glob = local_index
 
 class EntryIndices:
-    def __init__():
+    def __init__(self):
         self.buy = []
         self.sell = []
+
