@@ -39,3 +39,20 @@ __annual_bars_of = {
     Timeframe.H4: 261*6,
     Timeframe.H1: 261*24
 }
+
+class IndexRange(tuple):
+    def __init__(start, exclusive_end):
+        super().__init__([start exclusive_end])
+
+    def sliced_of(self, l):
+        l[self[0]:self[1]]
+
+class Index:
+    def __init__(irange:IndexRange, local_index:int):
+        self.local = local_index
+        self.global = irange[0] + local_index
+
+class EntryIndices:
+    def __init__():
+        self.buy = []
+        self.sell = []

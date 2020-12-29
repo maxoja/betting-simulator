@@ -23,6 +23,28 @@ class Config:
     def as_str(self):
         return f'quote={self.quote}|timeframe={self.timeframe}|rsi_period={self.rsi_period}|padding={self.padding_thresh}|future_win={self.future_window}'
 
+def entry_points_rsi_reversal(df, config:Config, irange:utils.IndexRange=None) -> utils.EntryIndices:
+    sliced_df = irange.sliced_of(df) if irange else df
+    close_series = sliced_df[Col.CLOSE].reset_index(drop=True)
+    rsi_series = talib.RSI(close_series, config.rsi_period)
+
+    buy_entries = []
+    sell_entries = []
+
+    entries = utils.EntryIndices()
+
+    for i in range(len(rsi_series)):
+        current_rsi = rsi_series[i]
+
+        if numpy.isnan(current_rsi):
+            continue
+
+        if current_rsi >= 100-config.padding_thresh:
+            entries.buy.append(utils.Index(irange, i))
+        if current_rsi <= config.padding_thresh:
+            entries.sell.append(utils.Index(irange, i))
+
+    return entries
 
 def analyse_rsi_reversal(df, config:Config, plot=True):
     
@@ -74,7 +96,7 @@ def run():
     PARAM_PERIOD = [14]
     PARAM_FUTURE_WIN = [1,2,3]
     PARAM_PADDING = [26,28,30,32,34]
-
+    
     for period in PARAM_PERIOD:
         for padding in PARAM_PADDING:
             for future_win in PARAM_FUTURE_WIN:
