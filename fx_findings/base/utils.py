@@ -1,4 +1,4 @@
-from .enums import Quote, Col, Timeframe
+from .enums import Quote, Col, Timeframe, PosType
 
 
 def slice_frame(df, size, shift=0, buffer=0):
@@ -57,6 +57,19 @@ class Index:
 
 class EntryIndices:
     def __init__(self):
-        self.buy = []
-        self.sell = []
+        self.__idx = []
+        self.__type = []
+
+    def append(self, i:Index, pos_type:PosType):
+        self.__type.append(pos_type)
+        self.__idx.append(i)
+
+    def __getitem__(self, i):
+        return self.__type[i], self.__idx[i]
+    
+    def size(self):
+        return len(self.__idx)
+
+    
+
 

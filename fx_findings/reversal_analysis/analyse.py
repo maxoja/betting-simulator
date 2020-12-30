@@ -1,7 +1,7 @@
 import numpy
 import talib
 
-from ..base.enums import Timeframe, Quote, Col, Broker
+from ..base.enums import Timeframe, Quote, Col, Broker, PosType
 from ..base import loader
 from ..base import utils
 from ..base import plotting
@@ -40,9 +40,9 @@ def entry_points_rsi_reversal(df, settings:Settings, irange:utils.IndexRange=Non
             continue
 
         if current_rsi >= 100-settings.padding_thresh:
-            entries.buy.append(utils.Index(irange, i))
+            entries.append(utils.Index(irange, i), PosType.LONG)
         if current_rsi <= settings.padding_thresh:
-            entries.sell.append(utils.Index(irange, i))
+            entries.append(utils.Index(irange, i), PosType.SHORT)
 
     return entries
 
@@ -95,22 +95,22 @@ def analyse_position_progression(df, entries:utils.EntryIndices, win_size=1, plo
     close = df[Col.CLOSE]
 
     long_diff = []
-    for entry_i in entries.buy:
-        if entry_i.glob + win_size >= len(df):
-            continue
-        start_price = close[entry_i.glob]
-        end_price = close[entry_i.glob + win_size]
-        diff = end_price - start_price
-        long_diff.append(diff)
-
     short_diff = []
-    for entry_i in entries.sell:
+
+    for i in range(entries.size()):
+        pos_type, entry_i = entries[i]
+
         if entry_i.glob + win_size >= len(df):
             continue
+
         start_price = close[entry_i.glob]
         end_price = close[entry_i.glob + win_size]
         diff = end_price - start_price
-        short_diff.append(diff)
+
+        if pos_type == PosType.LONG:
+            long_diff.append(diff)
+        else:
+            short_diff.append(diff)
 
     total_short = len(short_diff)
     total_long = len(long_diff)
@@ -131,7 +131,7 @@ def analyse_position_progression(df, entries:utils.EntryIndices, win_size=1, plo
 
 def run():
     PARAM_PERIOD = [14]
-    PARAM_FUTURE_WIN = [1,2,3]
+    # PARAM_FUTURE_WIN = [1,2,3]
     PARAM_PADDING = [26,28,30,32,34]
     
     for period in PARAM_PERIOD:
