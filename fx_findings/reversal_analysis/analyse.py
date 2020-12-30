@@ -91,15 +91,18 @@ def analyse_position_progression(df, entries:utils.EntryIndices, win_size=1, plo
         plotting.show_plot()
 
 def run():
+    QUOTE = Quote.AUDCAD
+    TIMEFRAME = Timeframe.D1
     PARAM_PERIOD = [14]
-    PARAM_PADDING = [20,25,30,35]
+    # PARAM_PADDING = [20,25,30,35]
+    PARAM_PADDING = [26,29,32,35]
     
     for period in PARAM_PERIOD:
         for padding in PARAM_PADDING:
-            settings = Settings(Quote.AUDCAD, Timeframe.H4, period, padding)
+            settings = Settings(QUOTE, TIMEFRAME, period, padding)
             print(settings.as_str())
             df = loader.load(settings.timeframe, settings.quote)
             entries = entry_points_rsi_reversal(df, settings, None)
             # analyse_position_progression(df, entries, win_size=3)
-            stoploss_analyse.analyse(df, entries, holding_period=5)
+            stoploss_analyse.analyse(df, entries, holding_period=3)
             print()

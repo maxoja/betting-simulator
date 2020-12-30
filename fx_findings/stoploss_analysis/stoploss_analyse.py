@@ -38,7 +38,7 @@ def analyse(df, entries:EntryIndices, holding_period=5):
         drawdowns.append(dd)
         
     # plot_histogram_unblock(drawdowns, title=f"Holding Drawdowns ({holding_period} bars holding)")
-    plot_for_stoploss(drawdowns, profits, center_val=1, title=f"Acc Drawdowns ({holding_period} bars) ({entries.size()} entries)")
+    plot_for_stoploss(drawdowns, profits, center_val=1, title=f"Stoploss Analysis from DD ({holding_period} bars) ({entries.size()} entries)")
         # plot_histogram_unblock(drawdowns, title=f"Holding Drawdowns ({holding_period} bars holding)")
         # if entry_type == PosType.LONG:
         #     loss_win = df[Col.LOW]
