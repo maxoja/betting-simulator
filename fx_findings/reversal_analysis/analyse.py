@@ -40,9 +40,9 @@ def entry_points_rsi_reversal(df, settings:Settings, irange:utils.IndexRange=Non
             continue
 
         if current_rsi >= 100-settings.padding_thresh:
-            entries.append(utils.Index(irange, i), PosType.LONG)
-        if current_rsi <= settings.padding_thresh:
             entries.append(utils.Index(irange, i), PosType.SHORT)
+        if current_rsi <= settings.padding_thresh:
+            entries.append(utils.Index(irange, i), PosType.LONG)
 
     return entries
     
