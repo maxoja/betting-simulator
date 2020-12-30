@@ -5,6 +5,7 @@ from ..base.enums import Timeframe, Quote, Col, Broker, PosType
 from ..base import loader
 from ..base import utils
 from ..base import plotting
+from ..stoploss_analysis import stoploss_analyse
 
 OUTPUT_DIR = './out/rsi_reversal/'
 RSI_PERIOD = 14
@@ -99,5 +100,6 @@ def run():
             print(settings.as_str())
             df = loader.load(settings.timeframe, settings.quote)
             entries = entry_points_rsi_reversal(df, settings, None)
-            analyse_position_progression(df, entries, win_size=3)
+            # analyse_position_progression(df, entries, win_size=3)
+            stoploss_analyse.analyse(df, entries, holding_period=5)
             print()
