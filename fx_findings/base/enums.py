@@ -1,4 +1,4 @@
-from enum import Enum
+from enum import Enum, auto
 
 class Timeframe(str, Enum):
     D1 = 'D1'
@@ -20,3 +20,7 @@ class Col(str, Enum):
 class Broker(str, Enum):
     PEPPER = 'pepper'
     XM = 'xm'
+
+class PosType(Enum):
+    SHORT = auto()
+    LONG = auto()

@@ -1,10 +1,11 @@
 import numpy
 import talib
 
-from ..base.enums import Timeframe, Quote, Col, Broker
+from ..base.enums import Timeframe, Quote, Col, Broker, PosType
 from ..base import loader
 from ..base import utils
 from ..base import plotting
+from ..stoploss_analysis import stoploss_analyse
 
 OUTPUT_DIR = './out/rsi_reversal/'
 RSI_PERIOD = 14
@@ -12,73 +13,96 @@ OVER_THRESH = 70
 UNDER_THRESH = 30
 FUTURE_PERIOD = 2
 
-class Config:
-    def __init__(self, quote, timeframe, rsi_period, padding_thresh, future_window):
+class Settings:
+    def __init__(self, quote, timeframe, rsi_period, padding_thresh):
         self.quote = quote
         self.timeframe = timeframe
         self.rsi_period = rsi_period
         self.padding_thresh = padding_thresh
-        self.future_window = future_window
 
     def as_str(self):
-        return f'quote={self.quote}|timeframe={self.timeframe}|rsi_period={self.rsi_period}|padding={self.padding_thresh}|future_win={self.future_window}'
+        return f'quote={self.quote}|timeframe={self.timeframe}|rsi_period={self.rsi_period}|padding={self.padding_thresh}'
 
+# entry at index i mean you open a trade after the bar at index i is closed
+def entry_points_rsi_reversal(df, settings:Settings, irange:utils.IndexRange=None) -> utils.EntryIndices:
+    sliced_df = irange.sliced_of(df) if irange else df
+    close_series = sliced_df[Col.CLOSE].reset_index(drop=True)
+    rsi_series = talib.RSI(close_series, settings.rsi_period)
 
-def analyse_rsi_reversal(df, config:Config, plot=True):
-    
-    close_series = df[Col.CLOSE].reset_index(drop=True)
-    rsi_series = talib.RSI(close_series, config.rsi_period)
-    
-    over_future_changes = []
-    under_future_changes = []
+    buy_entries = []
+    sell_entries = []
+
+    entries = utils.EntryIndices()
+
     for i in range(len(rsi_series)):
         current_rsi = rsi_series[i]
 
         if numpy.isnan(current_rsi):
             continue
-        if len(rsi_series) - i <= config.future_window:
+        
+        if entries.size() > 0:
+            _, last_entry_idx = entries[entries.size()-1]
+            if last_entry_idx.local == i-1:
+                continue
+
+        if current_rsi >= 100-settings.padding_thresh:
+            entries.append(utils.Index(irange, i), PosType.SHORT)
+        if current_rsi <= settings.padding_thresh:
+            entries.append(utils.Index(irange, i), PosType.LONG)
+
+    return entries
+    
+def analyse_position_progression(df, entries:utils.EntryIndices, win_size=1, plot=True):
+    close = df[Col.CLOSE]
+
+    long_diff = []
+    short_diff = []
+
+    for i in range(entries.size()):
+        pos_type, entry_i = entries[i]
+
+        if entry_i.glob + win_size >= len(df):
             continue
 
-        current_close = close_series[i]
-        future_close = close_series[i+config.future_window]
-        future_change_points = (future_close - current_close)/utils.point_size(config.quote)
+        start_price = close[entry_i.glob]
+        end_price = close[entry_i.glob + win_size]
+        diff = end_price - start_price
 
-        if current_rsi >= 100-config.padding_thresh:
-            over_future_changes.append(future_change_points)
-        if current_rsi <= config.padding_thresh:
-            under_future_changes.append(future_change_points)
+        if pos_type == PosType.LONG:
+            long_diff.append(diff)
+        else:
+            short_diff.append(diff)
 
-    n_bars = len(close_series)-config.rsi_period
-    n_years = n_bars/utils.annual_bars(config.timeframe)
-    total_over = len(over_future_changes)
-    total_under = len(under_future_changes)
+    total_short = len(short_diff)
+    total_long = len(long_diff)
 
-    print(config.as_str())
-    print('# Bars', n_bars, f'# Years {n_years:.2f}')
-    if total_over > 0:
-        print('overbought', total_over, utils.avg(over_future_changes))
-    if total_under > 0:
-        print('oversold  ', total_under, utils.avg(under_future_changes))
-    if total_over > 0 and total_under > 0:
-        print('weighted  ', total_over+total_under, utils.avg(list(map(lambda x: -x, over_future_changes)) + under_future_changes) )
+    if total_short > 0:
+        print('shorts', total_short, utils.avg(short_diff))
+    if total_long > 0:
+        print('longs  ', total_long, utils.avg(long_diff))
+    if total_short > 0 and total_long > 0:
+        print('weighted  ', total_short+total_long, utils.avg(list(map(lambda x: -x, short_diff)) + long_diff) )
     
     if plot:
-        plotting.plot_histogram_unblock(over_future_changes)
-        plotting.plot_histogram_unblock(under_future_changes)
-        plotting.plot_centered_cumulative_histogram(over_future_changes)
-        plotting.plot_centered_cumulative_histogram(under_future_changes)
+        plotting.plot_histogram_unblock(short_diff, title="short prof/loss")
+        plotting.plot_histogram_unblock(long_diff, title="long prof/loss")
+        plotting.plot_centered_cumulative_histogram(short_diff, title="accumulated hist for short positions")
+        plotting.plot_centered_cumulative_histogram(long_diff, title="accumulated hist for long positions")
         plotting.show_plot()
-    
-    
-def run():
-    PARAM_PERIOD = [14]
-    PARAM_FUTURE_WIN = [1,2,3]
-    PARAM_PADDING = [26,28,30,32,34]
 
+def run():
+    QUOTE = Quote.AUDCAD
+    TIMEFRAME = Timeframe.D1
+    PARAM_PERIOD = [14]
+    # PARAM_PADDING = [20,25,30,35]
+    PARAM_PADDING = [26,29,32,35]
+    
     for period in PARAM_PERIOD:
         for padding in PARAM_PADDING:
-            for future_win in PARAM_FUTURE_WIN:
-                conf = Config(Quote.AUDCAD, Timeframe.D1, period, padding, future_win)
-                df = loader.load(conf.timeframe, conf.quote)
-                analyse_rsi_reversal(df, conf, plot=False)
-                print()
+            settings = Settings(QUOTE, TIMEFRAME, period, padding)
+            print(settings.as_str())
+            df = loader.load(settings.timeframe, settings.quote)
+            entries = entry_points_rsi_reversal(df, settings, None)
+            # analyse_position_progression(df, entries, win_size=3)
+            stoploss_analyse.analyse(df, entries, holding_period=3)
+            print()
