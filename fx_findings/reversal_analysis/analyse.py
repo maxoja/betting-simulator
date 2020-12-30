@@ -38,6 +38,11 @@ def entry_points_rsi_reversal(df, settings:Settings, irange:utils.IndexRange=Non
 
         if numpy.isnan(current_rsi):
             continue
+        
+        if entries.size() > 0:
+            _, last_entry_idx = entries[entries.size()-1]
+            if last_entry_idx.local == i-1:
+                continue
 
         if current_rsi >= 100-settings.padding_thresh:
             entries.append(utils.Index(irange, i), PosType.SHORT)
@@ -86,12 +91,13 @@ def analyse_position_progression(df, entries:utils.EntryIndices, win_size=1, plo
 
 def run():
     PARAM_PERIOD = [14]
-    PARAM_PADDING = [26,28,30,32,34]
+    PARAM_PADDING = [20,25,30,35]
     
     for period in PARAM_PERIOD:
         for padding in PARAM_PADDING:
-            settings = Settings(Quote.AUDCAD, Timeframe.D1, period, padding)
+            settings = Settings(Quote.AUDCAD, Timeframe.H4, period, padding)
+            print(settings.as_str())
             df = loader.load(settings.timeframe, settings.quote)
             entries = entry_points_rsi_reversal(df, settings, None)
-            analyse_position_progression(df, entries)
+            analyse_position_progression(df, entries, win_size=3)
             print()
