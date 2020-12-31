@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+from matplotlib.ticker import (AutoMinorLocator, MultipleLocator)
 import numpy as np
 
 def plot_lines_unblock(lines, title=""):
@@ -33,10 +34,17 @@ def plot_centered_cumulative_histogram(sample_data, center_val=0, title=""):
 
 def plot_for_stoploss(sample_data, profits, center_val=0, title=""):
     if not sample_data:
-        plt.figure(title)
+        plt.figure()
+        plt.title(title)
         plt.plot([])
         plt.show(block=False)
         return
+
+    _, axs = plt.subplots(3,1, sharex=True)
+    ax1 = axs[0]
+    ax2 = axs[1]
+    ax3 = axs[2]
+
     profits = [x for _,x in sorted(zip(sample_data,profits))]
     sample_data = sorted(sample_data)
     center_index = min(range(len(sample_data))[::-1], key=lambda i: abs(center_val-sample_data[i]))
@@ -47,46 +55,49 @@ def plot_for_stoploss(sample_data, profits, center_val=0, title=""):
     acc_pf_y = np.cumsum(profits[::-1])[::-1]
     norm_acc_pf_y = acc_pf_y / max(max(acc_pf_y), abs(min(acc_pf_y))) * 100
     # print(acc_pf_y)
-    plt.figure()
-    plt.title(title)
+    ax1.set_title(title)
     BLUE = 'C0'
     ORANGE = 'C1'
     RED = 'C3'
     GREEN = 'C2'
-    TEAL = '#17becf'
     BLACK = "#000000"
-    GREY = "#999999"
     
     # [OK]
-    plt.plot(count_x, norm_acc_pf_y, GREEN, label="cumu prof at normal exit without SL (<<)") # cumulative profit if trades from the right exit at the end of holding period
+    ax1.plot(count_x, norm_acc_pf_y, GREEN, label="cumu prof at normal exit without SL (<<)") # cumulative profit if trades from the right exit at the end of holding period
     # []
-    plt.plot(count_x, norm_acc_dd_y, RED, label='cumu loss at DD (>>)') # cumulative loss if trades from the left exit at dd
+    ax1.plot(count_x, norm_acc_dd_y, RED, label='cumu loss at DD (>>)') # cumulative loss if trades from the left exit at dd
     # []
     # cumulative loss if trades from the left exit at stoploss of X value
     acc_qq_y = np.array([(i+1)*-sample_data[i] for i,acc_dd in enumerate(norm_acc_dd_y)])
     norm_acc_qq_y = acc_qq_y / max(max(acc_qq_y), abs(min(acc_qq_y)))*100
-    plt.plot(count_x, norm_acc_qq_y, ORANGE, label='cumu loss at SL set at DD (>>)')
+    ax1.plot(count_x, norm_acc_qq_y, ORANGE, label='cumu loss at SL set at DD (>>)')
 
     # [OK]
-    plt.plot(count_x, count_y, BLUE, label='cumulative trade dist by DD (<<)') # cumulative distribution of trades over worst dd
+    ax1.plot(count_x, count_y, BLUE, label='cumulative trade dist by DD (<<)') # cumulative distribution of trades over worst dd
 
     # [OK]
     weights = np.ones_like(sample_data)/float(len(sample_data))*50
-    plt.hist(sample_data, color=BLUE, weights=weights, bins=128, label='trade dist by DD') # trades distributed by worst dd
+    ax1.hist(sample_data, color=BLUE, weights=weights, bins=128, label='trade dist by DD') # trades distributed by worst dd
 
-    plt.legend(fontsize="x-small")
+    ax1.legend(fontsize="x-small")
 
-    plt.figure()
-    plt.plot(count_x, acc_pf_y, GREEN, label="cumu prof at normal exit without SL (<<)")
-    plt.plot(count_x, acc_qq_y, ORANGE, label='cumu loss at SL set at DD (>>)')
+    ax2.plot(count_x, acc_pf_y, GREEN, label="cumu prof at normal exit without SL (<<)")
+    ax2.plot(count_x, acc_qq_y, ORANGE, label='cumu loss at SL set at DD (>>)')
     net = acc_pf_y - acc_qq_y
-    plt.plot(count_x, net, BLACK, linewidth=1.5, label='net')
+    ax2.plot(count_x, net, BLACK, linewidth=1.5, label='net')
     # plt.plot(count_x, net/acc_qq_y/100, GREY, linewidth=1.5, label='recovery factor')
     # [OK]
     weights = np.ones_like(sample_data)/float(len(sample_data))*0.01
-    plt.hist(sample_data, color=BLUE, weights=weights, bins=128, label='trade dist by DD') # trades distributed by worst dd
-    plt.legend(fontsize='x-small')
+    ax2.hist(sample_data, color=BLUE, weights=weights, bins=128, label='trade dist by DD') # trades distributed by worst dd
+    ax2.vlines(-0.0015, 0,max(acc_pf_y))
+    ax2.legend(fontsize='x-small')
 
+    recovery = net/acc_qq_y
+    recovery = np.clip(recovery, -5, 5)
+    ax3.plot(count_x, recovery)
+    ax3.vlines(-0.00001*200, 0, max(recovery), color=BLACK)
+    ax3.yaxis.set_major_locator(MultipleLocator(1))
+    ax3.grid(True)
     plt.show(block=False) 
 
 

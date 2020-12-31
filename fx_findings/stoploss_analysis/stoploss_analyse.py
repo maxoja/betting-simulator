@@ -6,7 +6,7 @@ from ..base.plotting import plot_lines_unblock, show_plot, plot_histogram_unbloc
 def slice_reset_index(df, col:Col, irange:IndexRange):
     return irange.sliced_of(df[Col.LOW]).reset_index(drop=True)
 
-def analyse(df, entries:EntryIndices, holding_period=5):
+def analyse(df, avg_spread, entries:EntryIndices, holding_period=5):
 
     # loss_lines_long = []
     # loss_lines_short = []
@@ -29,15 +29,16 @@ def analyse(df, entries:EntryIndices, holding_period=5):
         rel_lows = [l - entry_price for l in lows]
         rel_closes = [c - entry_price for c in closes]
         if entry_type == PosType.LONG:
-            profits.append(rel_closes[-1])
+            profits.append(rel_closes[-1]-avg_spread)
             dd = min(rel_lows)
         else:
-            profits.append(-1*rel_closes[-1])
+            profits.append(-1*rel_closes[-1]-avg_spread)
             dd = -max(rel_highs)
 
         drawdowns.append(dd)
         
-    # plot_histogram_unblock(drawdowns, title=f"Holding Drawdowns ({holding_period} bars holding)")
+    # print(sum(profits))
+    # plot_histogram_unblock(profits)
     plot_for_stoploss(drawdowns, profits, center_val=1, title=f"Stoploss Analysis from DD ({holding_period} bars) ({entries.size()} entries)")
         # plot_histogram_unblock(drawdowns, title=f"Holding Drawdowns ({holding_period} bars holding)")
         # if entry_type == PosType.LONG:

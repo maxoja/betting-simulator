@@ -11,8 +11,10 @@ def analyse_spread(timeframe:Timeframe, quote:Quote, broker:Broker):
     broker_spread = utils.average_spread(df)
     broker_len = len(df)
 
-    print('tickstory', '----------', tickstory_len, tickstory_spread)
-    print('broker   ', f'{broker:10s}', broker_len, broker_spread)
+    print('(unit in points)')
+    print('tickstory', '----------', f'{tickstory_len} {tickstory_spread:.2f}')
+    print('broker   ', f'{broker:10s}', f'{broker_len} {broker_spread:.2f}')
+    return broker_spread
 
 def run():
     analyse_spread(Timeframe.H1, Quote.AUDCAD, Broker.XM)
