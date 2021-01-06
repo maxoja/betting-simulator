@@ -14,6 +14,13 @@ def plot_histogram_unblock(sample_data, title=""):
     plt.hist(sample_data, bins=128)
     plt.show(block=False)
 
+def plot_dict_as_barchart(d, title="", block=False):
+    plt.figure()
+    plt.title(title)
+    plt.grid(axis='y')
+    print(d.keys())
+    plt.bar(d.keys(), d.values())
+    plt.show(block=block)
 
 def plot_centered_cumulative_histogram(sample_data, center_val=0, title=""):
     if not sample_data:

@@ -1,6 +1,7 @@
 from ..base.enums import Timeframe, Quote, Broker, Col
 from ..base import loader
 from ..base import utils
+from ..base import plotting
 
 str_of_weekday = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
 
@@ -15,7 +16,7 @@ def analyse_time_based_spread(timeframe:Timeframe, quote:Quote, broker:Broker):
             weekday = datetime.weekday()
             key = str_of_weekday[weekday]
         else: # assume hours based
-            key = datetime.hour
+            key = f'{datetime.hour:02d}'
         
         if key in time_based_spread:
             time_based_spread[key].append(spread)
@@ -26,7 +27,7 @@ def analyse_time_based_spread(timeframe:Timeframe, quote:Quote, broker:Broker):
         l = time_based_spread[key]
         time_based_spread[key] = utils.avg(l)
 
-    return time_based_spread
+    return { k:time_based_spread[k] for k in sorted(time_based_spread.keys()) }
             
             
             
@@ -47,9 +48,12 @@ def analyse_broker_spread_ratio(timeframe:Timeframe, quote:Quote, broker:Broker)
     return broker_spread/tickstory_spread, tickstory_spread, broker_spread
 
 def run():
-    ratio, base_spread, broke_spread = analyse_broker_spread_ratio(Timeframe.H1, Quote.AUDCAD, Broker.XM)
-    time_based_spread = analyse_time_based_spread(Timeframe.H1, Quote.AUDCAD, Broker.XM)
+    TARGET_BROKER = Broker.XM
+    TARGET_QUOTE = Quote.AUDCAD
 
-    print('Time-based avg spread', Timeframe.H1)
-    for key, val in time_based_spread.items():
-        print(key, val)
+    ratio, base_spread, broke_spread = analyse_broker_spread_ratio(Timeframe.H1, TARGET_QUOTE, TARGET_BROKER)
+    broke_spread = analyse_time_based_spread(Timeframe.H1, TARGET_QUOTE, TARGET_BROKER)
+    tickstory_spread = analyse_time_based_spread(Timeframe.H1, TARGET_QUOTE, None)
+
+    plotting.plot_dict_as_barchart(broke_spread, title=f"{TARGET_BROKER} Spreads (Points)")
+    plotting.plot_dict_as_barchart(tickstory_spread, title="Tickstory Spreads (Points)", block=True)
