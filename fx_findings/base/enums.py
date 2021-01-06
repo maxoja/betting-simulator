@@ -7,6 +7,7 @@ class Timeframe(str, Enum):
 
 class Quote(str, Enum):
     AUDCAD = 'AUDCAD'
+    EURCHF = 'EURCHF'
 
 class Col(str, Enum):
     DATETIME = '<DATETIME>'

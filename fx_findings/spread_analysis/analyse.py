@@ -48,7 +48,8 @@ def analyse_broker_spread_ratio(timeframe:Timeframe, quote:Quote, broker:Broker)
 
 def run():
     TARGET_BROKER = Broker.XM
-    TARGET_QUOTE = Quote.AUDCAD
+    # TARGET_QUOTE = Quote.AUDCAD
+    TARGET_QUOTE = Quote.EURCHF
 
     ratio, base_spread, broke_spread = analyse_broker_spread_ratio(Timeframe.H1, TARGET_QUOTE, TARGET_BROKER)
     broke_spread = analyse_time_based_spread(Timeframe.H1, TARGET_QUOTE, TARGET_BROKER)
