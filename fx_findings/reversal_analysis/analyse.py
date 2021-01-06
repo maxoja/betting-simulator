@@ -14,11 +14,12 @@ UNDER_THRESH = 30
 FUTURE_PERIOD = 2
 
 class Settings:
-    def __init__(self, quote, timeframe, rsi_period, padding_thresh):
+    def __init__(self, quote, timeframe, rsi_period, padding_thresh, holding):
         self.quote = quote
         self.timeframe = timeframe
         self.rsi_period = rsi_period
         self.padding_thresh = padding_thresh
+        self.holding = holding
 
     def as_str(self):
         return f'quote={self.quote}|timeframe={self.timeframe}|rsi_period={self.rsi_period}|padding={self.padding_thresh}'
@@ -41,8 +42,9 @@ def entry_points_rsi_reversal(df, settings:Settings, irange:utils.IndexRange=Non
             continue
         
         if entries.size() > 0:
+            # skip entry until prev position is closed
             _, last_entry_idx = entries[entries.size()-1]
-            if last_entry_idx.local == i-1:
+            if i < last_entry_idx.local + settings.holding:
                 continue
 
         if current_rsi >= 100-settings.padding_thresh:
@@ -95,15 +97,17 @@ def run():
     TIMEFRAME = Timeframe.D1
     # TIMEFRAME = Timeframe.H4
     PARAM_PERIOD = [14]
-    PARAM_PADDING = [28,30,33]
-    # PARAM_PADDING = [29,32,35]
+    PARAM_HOLDING = [4]
     
     for period in PARAM_PERIOD:
         for padding in PARAM_PADDING:
-            settings = Settings(QUOTE, TIMEFRAME, period, padding)
-            print(settings.as_str())
-            df = loader.load(settings.timeframe, settings.quote)
-            entries = entry_points_rsi_reversal(df, settings, None)
-            # analyse_position_progression(df, entries, win_size=3)
-            stoploss_analyse.analyse(df, 30*0.00001, entries, holding_period=5)
-            print()
+            for holding in PARAM_HOLDING:
+                settings = Settings(QUOTE, TIMEFRAME, period, padding, holding)
+                print(settings.as_str())
+                df = loader.load(settings.timeframe, settings.quote)
+                entries = entry_points_rsi_reversal(df, settings, None)
+                # analyse_position_progression(df, entries, win_size=3)
+                print(entries.size())
+
+                stoploss_analyse.analyse(df, 30*0.00001, entries, holding_period=holding)
+                print()
