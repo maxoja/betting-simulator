@@ -94,9 +94,9 @@ def analyse_position_progression(df, entries:utils.EntryIndices, win_size=1, plo
 
 def run():
     QUOTE = Quote.AUDCAD
-    TIMEFRAME = Timeframe.D1
-    # TIMEFRAME = Timeframe.H4
-    PARAM_PERIOD = [14]
+    TIMEFRAME = Timeframe.H4
+    PARAM_PERIOD = [32]
+    PARAM_PADDING = [34]
     PARAM_HOLDING = [4]
     
     for period in PARAM_PERIOD:
