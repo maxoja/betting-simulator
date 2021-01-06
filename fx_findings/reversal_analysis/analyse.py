@@ -108,6 +108,9 @@ def run():
                 entries = entry_points_rsi_reversal(df, settings, None)
                 # analyse_position_progression(df, entries, win_size=3)
                 print(entries.size())
+                for i in range(entries.size()):
+                    pos_type, idx = entries[i]
+                    print(df[Col.DATETIME][idx.glob])
 
                 stoploss_analyse.analyse(df, 30*0.00001, entries, holding_period=holding)
                 print()
