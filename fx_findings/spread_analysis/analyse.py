@@ -5,7 +5,7 @@ from ..base import utils
 str_of_weekday = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
 
 def analyse_time_based_spread(timeframe:Timeframe, quote:Quote, broker:Broker):
-    df = loader.load(timeframe, quote)
+    df = loader.load(timeframe, quote, broker)
     time_based_spread = dict()
     col_datetime = df[Col.DATETIME]
     col_spread = df[Col.SPREAD]
