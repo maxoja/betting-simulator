@@ -27,9 +27,7 @@ def analyse_time_based_spread(timeframe:Timeframe, quote:Quote, broker:Broker):
         l = time_based_spread[key]
         time_based_spread[key] = utils.avg(l)
 
-    return { k:time_based_spread[k] for k in sorted(time_based_spread.keys()) }
-            
-            
+    return utils.sorted_dict(time_based_spread)
             
 
 def analyse_broker_spread_ratio(timeframe:Timeframe, quote:Quote, broker:Broker):
@@ -46,6 +44,7 @@ def analyse_broker_spread_ratio(timeframe:Timeframe, quote:Quote, broker:Broker)
     print('broker   ', f'{broker:10s}', f'{broker_len} {broker_spread:.2f}')
     print(f'{broker:s}/tickstory ratio => {broker_spread/tickstory_spread:.2f}')
     return broker_spread/tickstory_spread, tickstory_spread, broker_spread
+
 
 def run():
     TARGET_BROKER = Broker.XM
