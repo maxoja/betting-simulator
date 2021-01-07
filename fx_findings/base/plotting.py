@@ -2,30 +2,31 @@ import matplotlib.pyplot as plt
 from matplotlib.ticker import (AutoMinorLocator, MultipleLocator)
 import numpy as np
 
-def plot_lines_unblock(lines, title=""):
+def plot_lines(lines, title="", block=False):
     plt.figure()
     plt.title(title)
     for line in lines:
         plt.plot(line)
-    plt.show(block=False)
+    plt.show(block=block)
 
-def plot_histogram_unblock(sample_data, title=""):
-    plt.figure(title)
+def plot_histogram(sample_data, title="", block=False):
+    plt.figure()
+    plt.title(title)
     plt.hist(sample_data, bins=128)
-    plt.show(block=False)
+    plt.show(block=block)
 
-def plot_dict_as_barchart(d, title="", block=False):
+def plot_dict_as_bars(d, title="", block=False):
     plt.figure()
     plt.title(title)
     plt.grid(axis='y')
     plt.bar(d.keys(), d.values())
     plt.show(block=block)
 
-def plot_centered_cumulative_histogram(sample_data, center_val=0, title=""):
+def plot_outward_cumulative_hist(sample_data, center_val=0, title="", block=False):
     if not sample_data:
         plt.figure(title)
         plt.plot([])
-        plt.show(block=False)
+        plt.show(block=block)
         return
     sample_data = sorted(sample_data)
     center_index = min(range(len(sample_data)), key=lambda i: abs(center_val-sample_data[i]))
@@ -35,15 +36,15 @@ def plot_centered_cumulative_histogram(sample_data, center_val=0, title=""):
     plt.plot(count_x, count_y)
     weights = np.ones_like(sample_data)/float(len(sample_data))*50
     plt.hist(sample_data, weights=weights, bins=128)
-    plt.show(block=False)
+    plt.show(block=block)
 
 
-def plot_for_stoploss(sample_data, profits, center_val=0, title=""):
+def plot_for_stoploss(sample_data, profits, center_val=0, title="", block=False):
     if not sample_data:
         plt.figure()
         plt.title(title)
         plt.plot([])
-        plt.show(block=False)
+        plt.show(block=block)
         return
 
     _, axs = plt.subplots(3,1, sharex=True)
@@ -104,7 +105,7 @@ def plot_for_stoploss(sample_data, profits, center_val=0, title=""):
     ax3.vlines(-0.00001*200, 0, max(recovery), color=BLACK)
     ax3.yaxis.set_major_locator(MultipleLocator(1))
     ax3.grid(True)
-    plt.show(block=False) 
+    plt.show(block=block) 
 
 
 def show_plot():
