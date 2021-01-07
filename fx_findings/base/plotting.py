@@ -18,7 +18,6 @@ def plot_dict_as_barchart(d, title="", block=False):
     plt.figure()
     plt.title(title)
     plt.grid(axis='y')
-    print(d.keys())
     plt.bar(d.keys(), d.values())
     plt.show(block=block)
 
