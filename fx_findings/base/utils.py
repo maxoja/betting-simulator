@@ -35,7 +35,8 @@ def sorted_dict(d):
 
 
 __point_size_of = {
-    Quote.AUDCAD: 0.00001
+    Quote.AUDCAD: 0.00001,
+    Quote.EURCHF: 0.00001
 }
 
 __annual_bars_of = {

@@ -8,7 +8,6 @@ def load(timeframe:Timeframe, quote:Quote, broker:Broker=None):
     cache_key = (timeframe, quote, broker)
 
     if cache_key in cache:
-        print('use cache')
         if cache[cache_key] is None:
             return None
         else:
