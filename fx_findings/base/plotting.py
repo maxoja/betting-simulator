@@ -2,6 +2,11 @@ import matplotlib.pyplot as plt
 from matplotlib.ticker import (AutoMinorLocator, MultipleLocator)
 import numpy as np
 
+def plot_boxes(samples, labels, block=False):
+    plt.figure()
+    plt.boxplot(samples, labels=labels)
+    plt.show(block=block)
+
 def plot_lines(lines, title="", block=False):
     plt.figure()
     plt.title(title)
@@ -13,6 +18,17 @@ def plot_histogram(sample_data, title="", block=False):
     plt.figure()
     plt.title(title)
     plt.hist(sample_data, bins=128)
+    plt.show(block=block)
+
+def plot_scatter(x, y, clr='blue', title="", block=False):
+    plt.figure()
+    plt.title(title)
+    if not type(y) is tuple:
+        y = [y]
+    if not type(clr) is tuple:
+        clr = [clr]
+    for y_set, c in zip(y, clr):
+        plt.scatter(x, y_set, c=c, s=2, alpha=0.5)
     plt.show(block=block)
 
 def plot_dict_as_bars(d, title="", block=False):
@@ -107,6 +123,5 @@ def plot_for_stoploss(sample_data, profits, center_val=0, title="", block=False)
     ax3.grid(True)
     plt.show(block=block) 
 
-
-def show_plot():
+def block():
     plt.show()

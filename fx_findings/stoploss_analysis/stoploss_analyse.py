@@ -1,7 +1,7 @@
 import pandas as pd
 from ..base.utils import EntryIndices, IndexRange
 from ..base.enums import PosType, Col
-from ..base.plotting import plot_lines, show_plot, plot_histogram, plot_outward_cumulative_hist, plot_for_stoploss
+from ..base.plotting import plot_lines, block, plot_histogram, plot_outward_cumulative_hist, plot_for_stoploss
 
 def slice_reset_index(df, col:Col, irange:IndexRange):
     return irange.sliced_of(df[Col.LOW]).reset_index(drop=True)
@@ -73,5 +73,5 @@ def analyse(df, avg_spread, entries:EntryIndices, holding_period=5):
     # plot_centered_cumulative_histogram(dd_short, title="dd short")
     
     
-    show_plot()
+    block()
         

@@ -33,7 +33,6 @@ def annual_bars(timeframe:Timeframe):
 def sorted_dict(d):
     return { k:d[k] for k in sorted(d.keys()) }
 
-
 __point_size_of = {
     Quote.AUDCAD: 0.00001,
     Quote.EURCHF: 0.00001

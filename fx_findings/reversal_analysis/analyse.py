@@ -90,7 +90,7 @@ def analyse_position_progression(df, entries:utils.EntryIndices, win_size=1, plo
         plotting.plot_histogram(long_diff, title="long prof/loss")
         plotting.plot_outward_cumulative_hist(short_diff, title="accumulated hist for short positions")
         plotting.plot_outward_cumulative_hist(long_diff, title="accumulated hist for long positions")
-        plotting.show_plot()
+        plotting.block()
 
 def run():
     QUOTE = Quote.AUDCAD
