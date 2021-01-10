@@ -4,10 +4,12 @@ class Timeframe(str, Enum):
     D1 = 'D1'
     H4 = 'H4'
     H1 = 'H1'
+    M5 = 'M5'
 
 class Quote(str, Enum):
     AUDCAD = 'AUDCAD'
     EURCHF = 'EURCHF'
+    EURUSD = 'EURUSD'
 
 class Col(str, Enum):
     DATETIME = '<DATETIME>'

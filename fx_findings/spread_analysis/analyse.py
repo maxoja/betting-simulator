@@ -16,8 +16,8 @@ def analyse_time_based_spread(timeframe:Timeframe, quote:Quote, broker:Broker):
             weekday = datetime.weekday()
             key = str_of_weekday[weekday]
         else: # assume hours based
-            key = f'{datetime.hour:02d}'
-        
+            key = f'{datetime.hour:02d}{datetime.minute:02d}'
+         
         if key in time_based_spread:
             time_based_spread[key].append(spread)
         else:
@@ -48,12 +48,14 @@ def analyse_broker_spread_ratio(timeframe:Timeframe, quote:Quote, broker:Broker)
 
 def run():
     TARGET_BROKER = Broker.XM
-    TARGET_QUOTE = Quote.EURCHF
-    # TARGET_QUOTE = Quote.AUDCAD
+    # TARGET_QUOTE = Quote.EURCHF
+    TARGET_QUOTE = Quote.EURUSD
+    # TARGET_TIMEFRAME = Timeframe.H1
+    TARGET_TIMEFRAME = Timeframe.M5
 
-    ratio, base_spread, broke_spread = analyse_broker_spread_ratio(Timeframe.H1, TARGET_QUOTE, TARGET_BROKER)
-    broke_spread = analyse_time_based_spread(Timeframe.H1, TARGET_QUOTE, TARGET_BROKER)
-    tickstory_spread = analyse_time_based_spread(Timeframe.H1, TARGET_QUOTE, None)
+    ratio, base_spread, broke_spread = analyse_broker_spread_ratio(TARGET_TIMEFRAME, TARGET_QUOTE, TARGET_BROKER)
+    broke_spread = analyse_time_based_spread(TARGET_TIMEFRAME, TARGET_QUOTE, TARGET_BROKER)
+    tickstory_spread = analyse_time_based_spread(TARGET_TIMEFRAME, TARGET_QUOTE, None)
 
     plotting.plot_dict_as_bars(broke_spread, title=f"{TARGET_BROKER} Spreads (Points)")
     plotting.plot_dict_as_bars(tickstory_spread, title="Tickstory Spreads (Points)", block=True)
