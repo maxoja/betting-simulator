@@ -36,6 +36,8 @@ def plot_dict_as_bars(d, title="", block=False):
     plt.title(title)
     plt.grid(axis='y')
     plt.bar(d.keys(), d.values())
+    plt.xticks(rotation = 90)
+    plt.tight_layout()
     plt.show(block=block)
 
 def plot_outward_cumulative_hist(sample_data, center_val=0, title="", block=False):

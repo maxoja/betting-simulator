@@ -5,6 +5,8 @@ class Timeframe(str, Enum):
     H4 = 'H4'
     H1 = 'H1'
     M5 = 'M5'
+    M15 = 'M15'
+    M20 = 'M20'
 
 class Quote(str, Enum):
     AUDCAD = 'AUDCAD'
@@ -23,6 +25,7 @@ class Col(str, Enum):
 class Broker(str, Enum):
     PEPPER = 'pepper'
     XM = 'xm'
+    XM_LOW = 'xm-low'
 
 class PosType(Enum):
     SHORT = auto()
