@@ -7,6 +7,7 @@ str_of_weekday = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
 
 def analyse_weekday_spread(timeframe:Timeframe, quote:Quote, broker:Broker):
     df, meta = loader.load(timeframe, quote, broker)
+    df = utils.slice_frame1(df, utils.annual_bars(timeframe)//2)
     spread_values = dict()
     col_datetime = df[Col.DATETIME]
     col_spread = df[Col.SPREAD]
@@ -25,6 +26,7 @@ def analyse_weekday_spread(timeframe:Timeframe, quote:Quote, broker:Broker):
 
 def analyse_time_spread(timeframe:Timeframe, quote:Quote, broker:Broker, weekday=None):
     df, meta = loader.load(timeframe, quote, broker)
+    df = utils.slice_frame1(df, utils.annual_bars(timeframe)//2)
     spread_values = dict()
     col_datetime = df[Col.DATETIME]
     col_spread = df[Col.SPREAD]
@@ -45,10 +47,12 @@ def analyse_time_spread(timeframe:Timeframe, quote:Quote, broker:Broker, weekday
 
 def analyse_broker_spread_ratio(timeframe:Timeframe, quote:Quote, broker:Broker):
     df, meta = loader.load(timeframe, quote, None)
+    df = utils.slice_frame1(df, utils.annual_bars(timeframe)//2)
     tickstory_spread = utils.average_spread(df)
     tickstory_len = len(df)
 
     df, meta = loader.load(timeframe, quote, broker)
+    df = utils.slice_frame1(df, utils.annual_bars(timeframe)//2)
     broker_spread = utils.average_spread(df)
     broker_len = len(df)
 

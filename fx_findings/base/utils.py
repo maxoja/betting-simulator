@@ -8,7 +8,7 @@ def slice_frame1(df, size, shift_end=0, buffer=0):
     start = (-size-shift_end-buffer)
     end = len(df)-shift_end
     window_size = size+buffer
-    print('->', window_size, len(df), '->', start, end)
+    # print('->', window_size, len(df), '->', start, end)
     return df[start:end]
 
 
@@ -54,7 +54,8 @@ __point_size_of = {
 __annual_bars_of = {
     Timeframe.D1: 261,
     Timeframe.H4: 261*6,
-    Timeframe.H1: 261*24
+    Timeframe.H1: 261*24,
+    Timeframe.M20: 261*24*3,
 }
 
 class IndexRange:
