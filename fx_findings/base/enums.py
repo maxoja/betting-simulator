@@ -21,6 +21,11 @@ class Col(str, Enum):
     LOW = '<LOW>'
     VOL = '<VOL>'
     SPREAD = '<SPREAD>'
+    RISE = 'RISE'
+    FALL = 'FALL'
+    BODY = 'BODY'
+    WICK_T = 'WICK_T'
+    WICK_B = 'WICK_B'
 
 class Broker(str, Enum):
     PEPPER = 'pepper'

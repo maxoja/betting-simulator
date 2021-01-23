@@ -6,7 +6,7 @@ from ..base import plotting
 str_of_weekday = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
 
 def analyse_weekday_spread(timeframe:Timeframe, quote:Quote, broker:Broker):
-    df = loader.load(timeframe, quote, broker)
+    df, meta = loader.load(timeframe, quote, broker)
     spread_values = dict()
     col_datetime = df[Col.DATETIME]
     col_spread = df[Col.SPREAD]
@@ -24,7 +24,7 @@ def analyse_weekday_spread(timeframe:Timeframe, quote:Quote, broker:Broker):
     return utils.sorted_dict(spread_avg)
 
 def analyse_time_spread(timeframe:Timeframe, quote:Quote, broker:Broker, weekday=None):
-    df = loader.load(timeframe, quote, broker)
+    df, meta = loader.load(timeframe, quote, broker)
     spread_values = dict()
     col_datetime = df[Col.DATETIME]
     col_spread = df[Col.SPREAD]
@@ -44,11 +44,11 @@ def analyse_time_spread(timeframe:Timeframe, quote:Quote, broker:Broker, weekday
             
 
 def analyse_broker_spread_ratio(timeframe:Timeframe, quote:Quote, broker:Broker):
-    df = loader.load(timeframe, quote, None)
+    df, meta = loader.load(timeframe, quote, None)
     tickstory_spread = utils.average_spread(df)
     tickstory_len = len(df)
 
-    df = loader.load(timeframe, quote, broker)
+    df, meta = loader.load(timeframe, quote, broker)
     broker_spread = utils.average_spread(df)
     broker_len = len(df)
 
@@ -59,15 +59,15 @@ def analyse_broker_spread_ratio(timeframe:Timeframe, quote:Quote, broker:Broker)
     return broker_spread/tickstory_spread, tickstory_spread, broker_spread
 
 
-def run():
-    TARGET_BROKER = Broker.XM_LOW
-    TARGET_QUOTE = Quote.AUDCAD
-    TARGET_TIMEFRAME = Timeframe.M20
+def run(TARGET_TIMEFRAME:Timeframe, TARGET_QUOTE:Quote, TARGET_BROKER:Broker):
+    # TARGET_BROKER = Broker('xm-low')
+    # TARGET_QUOTE = Quote.AUDCAD
+    # TARGET_TIMEFRAME = Timeframe.M20
 
     ratio, base_spread, broke_spread = analyse_broker_spread_ratio(TARGET_TIMEFRAME, TARGET_QUOTE, TARGET_BROKER)
 
     day_spread_broke = analyse_weekday_spread(TARGET_TIMEFRAME, TARGET_QUOTE, TARGET_BROKER)
-    plotting.plot_dict_as_bars(day_spread_broke, title="Day Spread - {TARGET_BROKER}")
+    plotting.plot_dict_as_bars(day_spread_broke, title=f"Day Spread - {TARGET_BROKER}")
 
     for i in [0, 1, 3, 4]:
         time_spread_broke = analyse_time_spread(TARGET_TIMEFRAME, TARGET_QUOTE, TARGET_BROKER, i)

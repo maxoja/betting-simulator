@@ -14,10 +14,10 @@ def plot_lines(lines, title="", block=False):
         plt.plot(line)
     plt.show(block=block)
 
-def plot_histogram(sample_data, title="", block=False):
+def plot_histogram(sample_data, title="", color=None, block=False):
     plt.figure()
     plt.title(title)
-    plt.hist(sample_data, bins=128)
+    plt.hist(sample_data, color=color, bins=128)
     plt.show(block=block)
 
 def plot_scatter(x, y, clr='blue', title="", block=False):

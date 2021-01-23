@@ -1,12 +1,21 @@
 from .enums import Quote, Col, Timeframe, PosType
 
 
-def slice_frame(df, size, shift=0, buffer=0):
-    if shift < 0 or size+buffer+shift >= len(df):
+def slice_frame1(df, size, shift_end=0, buffer=0):
+    if shift_end < 0 or size+buffer+shift_end >= len(df):
         return None
         
-    print('->', size+buffer, len(df), '->', (-size-shift-buffer), len(df)-shift)
-    return df[(-size-shift-buffer):len(df)-shift]
+    start = (-size-shift_end-buffer)
+    end = len(df)-shift_end
+    window_size = size+buffer
+    print('->', window_size, len(df), '->', start, end)
+    return df[start:end]
+
+
+def slice_frame2(df, size, shift_front=0, buffer=0):
+    start = shift_front - buffer
+    end = shift_front + size
+    return df[start:end]
 
 
 def average_spread(df):
