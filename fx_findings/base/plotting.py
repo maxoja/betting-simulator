@@ -56,8 +56,12 @@ def plot_outward_cumulative_hist(sample_data, center_val=0, title="", block=Fals
     plt.hist(sample_data, weights=weights, bins=128)
     plt.show(block=block)
 
-def plot_cross_cumulative(data_a, data_b, title="", block=False):
-    if len(data_a) == 0 and len(data_b) == 0:
+# use case 1:   You know the RSI value at each trade and also the trade results.
+#               The trades are categorised into 2 groups, gain and loss groups.
+#               This plot visualises and help choosing which RSI thresholdis best
+#               to exclude as many loss trades and remain as many gain trades.
+def plot_threshold_cross_cumulation(prefer_group, unprefer_group, normalise=False, title="", block=False):
+    if len(prefer_group) + len(unprefer_group) == 0:
         plt.figure()
         plt.title(title)
         plt.plot([])
@@ -67,23 +71,28 @@ def plot_cross_cumulative(data_a, data_b, title="", block=False):
     plt.figure()
     plt.title(title)
     
-    data_a = sorted(data_a)
-    # y_a = [i/len(data_a)*100 for i,val in enumerate(data_a)]
-    y_a = [i for i,val in enumerate(data_a)]
-    x_a = data_a[::]
-    plt.plot(x_a, y_a)
+    len_prefer = len(prefer_group)
+    len_unprefer = len(unprefer_group)
+    prefer_group = sorted(prefer_group)
+    unprefer_group = sorted(unprefer_group)
 
-    data_b = sorted(data_b)
-    # y_b = [i/len(data_b)*100 for i,val in enumerate(data_b)]
-    y_b = [i for i,val in enumerate(data_b)]
-    x_b = data_b[::]
+    if normalise:
+        y_a = list(np.arange(len_prefer)/len_prefer*100)
+        y_b = list(np.arange(len_unprefer)/len_unprefer*100)
+    else:
+        y_a = list(range(len_prefer))
+        y_b = list(range(len_unprefer))
+
+    x_a = prefer_group[::]
+    x_b = unprefer_group[::]
+    plt.plot(x_a, y_a)
     plt.plot(x_b, y_b, color='red')
 
-    min_x = int(min(min(x_a), min(x_b))) - 1
-    max_x = int(max(max(x_a), max(x_b))) + 1
-    range_x = range(min_x,max_x+1)
+    min_x = int(min(x_a + x_b))
+    max_x = int(max(x_a + x_b))
+    range_x = range(min_x-1, max_x+1)
     y = []
-    s = 0
+    net = 0
     last_a = 0
     last_b = 0
     for x in range_x:
@@ -97,10 +106,12 @@ def plot_cross_cumulative(data_a, data_b, title="", block=False):
             y_b.pop(0)
             x_b.pop(0)
 
-        s = last_a - last_b
-        y.append(s)
+        net = last_a - last_b
+        y.append(net)
     
     plt.plot(range_x, y, color='pink')
+    plt.vlines(range_x[np.argmax(y)], -10, 10)
+    plt.hlines(0, min(range_x), max(range_x))
     plt.show(block=block)
 
 
