@@ -2,6 +2,8 @@
 - [Betting Simulation](./betting-simulation)
 
 ### Todo
+- why are there so many trade mismatch?
+- add exclusion chart (cross accumulative) on wick analysis
 - weight rsi count of gain/loss entry groups
 - refactor wicker analysis
 - forward test run for wicker bot (6 quotes)

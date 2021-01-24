@@ -7,8 +7,6 @@ def slice_frame1(df, size, shift_end=0, buffer=0):
         
     start = (-size-shift_end-buffer)
     end = len(df)-shift_end
-    window_size = size+buffer
-    # print('->', window_size, len(df), '->', start, end)
     return df[start:end]
 
 

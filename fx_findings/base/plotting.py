@@ -56,6 +56,53 @@ def plot_outward_cumulative_hist(sample_data, center_val=0, title="", block=Fals
     plt.hist(sample_data, weights=weights, bins=128)
     plt.show(block=block)
 
+def plot_cross_cumulative(data_a, data_b, title="", block=False):
+    if len(data_a) == 0 and len(data_b) == 0:
+        plt.figure()
+        plt.title(title)
+        plt.plot([])
+        plt.show(block=block)
+        return
+        
+    plt.figure()
+    plt.title(title)
+    
+    data_a = sorted(data_a)
+    # y_a = [i/len(data_a)*100 for i,val in enumerate(data_a)]
+    y_a = [i for i,val in enumerate(data_a)]
+    x_a = data_a[::]
+    plt.plot(x_a, y_a)
+
+    data_b = sorted(data_b)
+    # y_b = [i/len(data_b)*100 for i,val in enumerate(data_b)]
+    y_b = [i for i,val in enumerate(data_b)]
+    x_b = data_b[::]
+    plt.plot(x_b, y_b, color='red')
+
+    min_x = int(min(min(x_a), min(x_b))) - 1
+    max_x = int(max(max(x_a), max(x_b))) + 1
+    range_x = range(min_x,max_x+1)
+    y = []
+    s = 0
+    last_a = 0
+    last_b = 0
+    for x in range_x:
+        while x_a and x_a[0] <= x:
+            last_a = y_a[0]
+            y_a.pop(0)
+            x_a.pop(0)
+
+        while x_b and x_b[0] <= x:
+            last_b = y_b[0]
+            y_b.pop(0)
+            x_b.pop(0)
+
+        s = last_a - last_b
+        y.append(s)
+    
+    plt.plot(range_x, y, color='pink')
+    plt.show(block=block)
+
 
 def plot_for_stoploss(sample_data, profits, center_val=0, title="", block=False):
     if not sample_data:
