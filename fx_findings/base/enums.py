@@ -12,6 +12,7 @@ class Quote(str, Enum):
     AUDCAD = 'AUDCAD'
     EURCHF = 'EURCHF'
     EURUSD = 'EURUSD'
+    USDJPY = 'USDJPY'
 
 class Col(str, Enum):
     DATETIME = '<DATETIME>'
