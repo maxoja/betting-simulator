@@ -3,7 +3,7 @@ from ..base import loader
 from ..base import utils
 from ..base import plotting
 
-str_of_weekday = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+str_of_weekday = ['0-Mon', '1-Tue', '2-Wed', '3-Thu', '4-Fri', '5-Sat', '6-Sun']
 
 def analyse_weekday_spread(timeframe:Timeframe, quote:Quote, broker:Broker):
     df, meta = loader.load(timeframe, quote, broker)
