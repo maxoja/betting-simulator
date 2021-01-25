@@ -1,3 +1,4 @@
+import numpy as np
 from .enums import Quote, Col, Timeframe, PosType
 
 
@@ -44,9 +45,20 @@ def annual_bars(timeframe:Timeframe):
 def sorted_dict(d):
     return { k:d[k] for k in sorted(d.keys()) }
 
+
+def shift_right_with_nan(a):
+    a = np.concatenate(([np.NaN], a))
+    a = a[:-1]
+    return a
+
+def remove_nan(a):
+    non_nan_idx = np.isnan(a)
+    return a[~non_nan_idx]
+
 __point_size_of = {
     Quote.AUDCAD: 0.00001,
-    Quote.EURCHF: 0.00001
+    Quote.EURCHF: 0.00001,
+    Quote.USDJPY: 0.001
 }
 
 __annual_bars_of = {
