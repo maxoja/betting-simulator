@@ -2,14 +2,15 @@
 - [Betting Simulation](./betting-simulation)
 
 ### Todo
+- finalise prev candle height cumulative plot for wicker analysis
 - refactor/generalise exclusion chart
-- refactor wicker analysis
 - weight rsi count of gain/loss entry groups
 
 ### Later
 - forward test run for wicker bot (6 quotes)
 
 ### Done
+- refactor wicker analysis
 - Use spread analysis to Compare low spread account with tickstory spread
 - limit data range within 2 years
 - find percentile of rsi value of each gain/loss entry groups

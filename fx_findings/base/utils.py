@@ -51,6 +51,12 @@ def shift_right_with_nan(a):
     a = a[:-1]
     return a
 
+
+def shift_left(a, val=np.NaN):
+    a = np.concatenate((a,[val]))
+    a = a[1:]
+    return a
+
 def remove_nan(a):
     non_nan_idx = np.isnan(a)
     return a[~non_nan_idx]

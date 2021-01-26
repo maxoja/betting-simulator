@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 from matplotlib.ticker import (AutoMinorLocator, MultipleLocator)
 import numpy as np
+from ..base.enums import Direction
 
 def plot_boxes(samples, labels, block=False):
     plt.figure()
@@ -60,7 +61,7 @@ def plot_outward_cumulative_hist(sample_data, center_val=0, title="", block=Fals
 #               The trades are categorised into 2 groups, gain and loss groups.
 #               This plot visualises and help choosing which RSI thresholdis best
 #               to exclude as many loss trades and remain as many gain trades.
-def plot_threshold_cross_cumulation(prefer_group, unprefer_group, normalise=False, title="", block=False):
+def plot_threshold_cross_cumulation(prefer_group, unprefer_group, acc_dir:Direction=Direction.RIGHT, background='white', normalise=False, title="", block=False):
     if len(prefer_group) + len(unprefer_group) == 0:
         plt.figure()
         plt.title(title)
@@ -69,7 +70,6 @@ def plot_threshold_cross_cumulation(prefer_group, unprefer_group, normalise=Fals
         return
         
     plt.figure()
-    plt.title(title)
     
     len_prefer = len(prefer_group)
     len_unprefer = len(unprefer_group)
@@ -82,6 +82,10 @@ def plot_threshold_cross_cumulation(prefer_group, unprefer_group, normalise=Fals
     else:
         y_a = list(range(len_prefer))
         y_b = list(range(len_unprefer))
+    
+    if acc_dir is Direction.LEFT:
+        y_a = y_a[::-1]
+        y_b = y_b[::-1]
 
     x_a = prefer_group[::]
     x_b = unprefer_group[::]
@@ -106,13 +110,22 @@ def plot_threshold_cross_cumulation(prefer_group, unprefer_group, normalise=Fals
             y_b.pop(0)
             x_b.pop(0)
 
-        net = last_a - last_b
+        if last_a == 0 or last_b == 0:
+            net = 0
+        else:
+            net = last_a - last_b
         y.append(net)
     
+    best_x = range_x[np.argmax(y)]
+    best_y = max(y)
+    plt.title(title + f'\nbest x={best_x} y={best_y}')
     plt.plot(range_x, y, color='pink')
-    plt.vlines(range_x[np.argmax(y)], -10, 10)
+    plt.vlines(best_x, -10, 10)
     plt.hlines(0, min(range_x), max(range_x))
+    plt.rcParams['figure.facecolor'] = background
+    plt.tight_layout()
     plt.show(block=block)
+    return best_y
 
 
 def plot_for_stoploss(sample_data, profits, center_val=0, title="", block=False):

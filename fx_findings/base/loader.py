@@ -47,7 +47,7 @@ def load(timeframe:Timeframe, quote:Quote, broker:Broker=None):
 
 def _destructure_candles(df, df_meta:Meta):
     point_size = utils.point_size(df_meta.quote)
-    wick_t, wick_b, body, rise, fall = [], [], [], [], []
+    wick_t, wick_b, body, rise, fall, height = [], [], [], [], [], []
     zipped_ohcl = zip(df[Col.OPEN]/point_size, df[Col.CLOSE]/point_size, df[Col.HIGH]/point_size, df[Col.LOW]/point_size)
 
     for op, cl, hi, lo in zipped_ohcl:
@@ -57,9 +57,11 @@ def _destructure_candles(df, df_meta:Meta):
         body += [cl - op]
         rise += [hi - op]
         fall += [op - lo]
+        height += [hi-lo]
 
     df[Col.WICK_T] = wick_t
     df[Col.WICK_B] = wick_b
     df[Col.RISE] = rise
     df[Col.FALL] = fall
     df[Col.BODY] = body
+    df[Col.HEIGHT] = height

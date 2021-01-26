@@ -1,4 +1,4 @@
-from enum import Enum, auto
+from enum import Enum, auto, IntEnum
 
 class Timeframe(str, Enum):
     D1 = 'D1'
@@ -27,12 +27,21 @@ class Col(str, Enum):
     BODY = 'BODY'
     WICK_T = 'WICK_T'
     WICK_B = 'WICK_B'
+    HEIGHT = 'HEIGHT'
 
 class Broker(str, Enum):
     PEPPER = 'pepper'
     XM = 'xm'
     XM_LOW = 'xm-low'
 
-class PosType(Enum):
-    SHORT = auto()
-    LONG = auto()
+class PosType(IntEnum):
+    SHORT = -1
+    LONG = 1
+
+class Direction(Enum):
+    LEFT = auto()
+    RIGHT = auto()
+
+class Clr(str, Enum):
+    LIGHT_RED = '#ffe7e6'
+    LIGHT_BLUE = '#e6e7ff'
