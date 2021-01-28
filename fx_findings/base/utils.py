@@ -1,12 +1,20 @@
+import numpy as np
 from .enums import Quote, Col, Timeframe, PosType
 
 
-def slice_frame(df, size, shift=0, buffer=0):
-    if shift < 0 or size+buffer+shift >= len(df):
+def slice_frame1(df, size, shift_end=0, buffer=0):
+    if shift_end < 0 or size+buffer+shift_end >= len(df):
         return None
         
-    print('->', size+buffer, len(df), '->', (-size-shift-buffer), len(df)-shift)
-    return df[(-size-shift-buffer):len(df)-shift]
+    start = (-size-shift_end-buffer)
+    end = len(df)-shift_end
+    return df[start:end]
+
+
+def slice_frame2(df, size, shift_front=0, buffer=0):
+    start = shift_front - buffer
+    end = shift_front + size
+    return df[start:end]
 
 
 def average_spread(df):
@@ -16,6 +24,10 @@ def average_spread(df):
 
 def avg(l):
     return sum(l)/len(l)
+
+
+def avg_dict(d):
+    return {key:avg(val) for key,val in d.items()}
 
 
 def point_size(quote:Quote):
@@ -34,15 +46,32 @@ def sorted_dict(d):
     return { k:d[k] for k in sorted(d.keys()) }
 
 
+def shift_right_with_nan(a):
+    a = np.concatenate(([np.NaN], a))
+    a = a[:-1]
+    return a
+
+
+def shift_left(a, val=np.NaN):
+    a = np.concatenate((a,[val]))
+    a = a[1:]
+    return a
+
+def remove_nan(a):
+    non_nan_idx = np.isnan(a)
+    return a[~non_nan_idx]
+
 __point_size_of = {
     Quote.AUDCAD: 0.00001,
-    Quote.EURCHF: 0.00001
+    Quote.EURCHF: 0.00001,
+    Quote.USDJPY: 0.001
 }
 
 __annual_bars_of = {
     Timeframe.D1: 261,
     Timeframe.H4: 261*6,
-    Timeframe.H1: 261*24
+    Timeframe.H1: 261*24,
+    Timeframe.M20: 261*24*3,
 }
 
 class IndexRange:
