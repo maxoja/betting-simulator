@@ -2,9 +2,8 @@
 - [Betting Simulation](./betting-simulation)
 
 ### Todo
-- finalise prev candle height cumulative plot for wicker analysis
-- refactor/generalise exclusion chart
 - weight rsi count of gain/loss entry groups
+- fix cross cumulative plot bg color bug
 
 ### Later
 - forward test run for wicker bot (6 quotes)
@@ -17,3 +16,5 @@
 - wick - plot rsi for gain/loss entry groups
 - why are there so many trade mismatch? -> because indicator value is forwarded in this analysis
 - add exclusion chart (cross accumulative) on wick analysis
+- finalise prev candle height cumulative plot for wicker analysis
+- refactor/generalise exclusion chart

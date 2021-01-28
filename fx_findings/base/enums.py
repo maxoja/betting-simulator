@@ -10,6 +10,7 @@ class Timeframe(str, Enum):
 
 class Quote(str, Enum):
     AUDCAD = 'AUDCAD'
+    AUDNZD = 'AUDNZD'
     EURCHF = 'EURCHF'
     EURUSD = 'EURUSD'
     USDJPY = 'USDJPY'

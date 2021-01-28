@@ -60,7 +60,7 @@ def run(timeframe:Timeframe=Timeframe.D1, quote:Quote=Quote.USDJPY, pos_type:Pos
             loss_rsi = utils.remove_nan(loss_rsi)
 
             acc_dir = Direction.RIGHT if pos_type is PosType.SHORT else Direction.LEFT
-            best_rsi = plotting.plot_threshold_cross_cumulation(gain_rsi, loss_rsi, acc_dir, background, title=f'RSI PERIOD={rsi_period} ENTRY={entry_min_risefall}')
+            plotting.plot_threshold_cross_cumulation(gain_rsi, loss_rsi, acc_dir, background, title=f'RSI PERIOD={rsi_period} ENTRY={entry_min_risefall}')
             # plotting.plot_threshold_cross_cumulation(gain_rsi_buy, loss_rsi_buy, title=f'BUY RSI PERIOD={rsi_period} ENTRY={entry_min_risefall}')
             # plotting.plot_histogram(gain_rsi, title=f"RSI-{rsi_period} of gains (avg {utils.avg(gain_rsi):.02f} med {np.median(gain_rsi):.02f})")
             # plotting.plot_histogram(loss_rsi, color='red', title=f"RSI-{rsi_period} of loss (avg {utils.avg(loss_rsi):.02f} med {np.median(loss_rsi):.02f})")
@@ -76,8 +76,7 @@ def run(timeframe:Timeframe=Timeframe.D1, quote:Quote=Quote.USDJPY, pos_type:Pos
             gain_height = entry_height[gain_idx]
             loss_height = entry_height[loss_idx]
 
-        best_height_l = plotting.plot_threshold_cross_cumulation(gain_height, loss_height, None, background, title=f'Prev Height ENTRY={entry_min_risefall}')
-        
+        plotting.plot_threshold_cross_cumulation(gain_height, loss_height, None, background, title=f'Prev Height ENTRY={entry_min_risefall}')
         plotting.block()
 
     plotting.plot_histogram(body, title=f'{quote} {timeframe} Body Sizes (points): {data_size}')
