@@ -22,7 +22,7 @@ def run(timeframe:Timeframe=Timeframe.D1, quote:Quote=Quote.USDJPY, pos_type:Pos
     height = df[Col.HEIGHT].to_numpy()
 
     min_rise, max_rise = min(rise), max(rise)
-    thresh_range = range(int(min_rise)+50, int(max_rise+1), 100)
+    thresh_range = range(int(min_rise)+100, int(max_rise+1), 50)
     # thresh_range = [250, 300, 350, 400, 450, 500, 550]
     # thresh_range = [300]
     x1 = []
@@ -76,8 +76,7 @@ def run(timeframe:Timeframe=Timeframe.D1, quote:Quote=Quote.USDJPY, pos_type:Pos
             gain_height = entry_height[gain_idx]
             loss_height = entry_height[loss_idx]
 
-        best_height_r = plotting.plot_threshold_cross_cumulation(gain_height, loss_height, Direction.RIGHT, background, title=f'HEIGHT >>>> ENTRY={entry_min_risefall}')
-        best_height_l = plotting.plot_threshold_cross_cumulation(gain_height, loss_height, Direction.LEFT, background, title=f'HEIGHT <<<< ENTRY={entry_min_risefall}')
+        best_height_l = plotting.plot_threshold_cross_cumulation(gain_height, loss_height, None, background, title=f'Prev Height ENTRY={entry_min_risefall}')
         
         plotting.block()
 
