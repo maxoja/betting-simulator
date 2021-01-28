@@ -45,3 +45,7 @@ class Direction(Enum):
 class Clr(str, Enum):
     LIGHT_RED = '#ffe7e6'
     LIGHT_BLUE = '#e6e7ff'
+    DEFAULT_BLUE = '#1f77b4'
+    RED = 'red'
+    ROSE = 'pink'
+    LAVENDER = 'purple'

@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 from matplotlib.ticker import (AutoMinorLocator, MultipleLocator)
 import numpy as np
-from ..base.enums import Direction
+from ..base.enums import Direction, Clr
 
 def plot_boxes(samples, labels, block=False):
     plt.figure()
@@ -83,44 +83,70 @@ def plot_threshold_cross_cumulation(prefer_group, unprefer_group, acc_dir:Direct
         y_a = list(range(len_prefer))
         y_b = list(range(len_unprefer))
     
+    ##################
+    y_a_r = y_a[::]
+    y_b_r = y_b[::]
+    ##################
+
     if acc_dir is Direction.LEFT:
         y_a = y_a[::-1]
         y_b = y_b[::-1]
 
     x_a = prefer_group[::]
     x_b = unprefer_group[::]
-    plt.plot(x_a, y_a)
-    plt.plot(x_b, y_b, color='red')
-
+    plt.plot(x_a, y_a, color=Clr.DEFAULT_BLUE)
+    plt.plot(x_b, y_b, color=Clr.RED)
+    plt.plot(x_a, y_a_r, color=Clr.DEFAULT_BLUE)
+    plt.plot(x_b, y_b_r, color=Clr.RED)
+    
     min_x = int(min(x_a + x_b))
     max_x = int(max(x_a + x_b))
     range_x = range(min_x-1, max_x+1)
     y = []
+    y_r = []
     net = 0
+    net_r = 0
     last_a = 0
+    last_a_r = 0
     last_b = 0
+    last_b_r = 0
+
     for x in range_x:
         while x_a and x_a[0] <= x:
+            last_a_r = y_a_r[0]
             last_a = y_a[0]
+            y_a_r.pop(0)
             y_a.pop(0)
             x_a.pop(0)
 
         while x_b and x_b[0] <= x:
+            last_b_r = y_b_r[0]
             last_b = y_b[0]
+            y_b_r.pop(0)
             y_b.pop(0)
             x_b.pop(0)
 
-        if last_a == 0 or last_b == 0:
-            net = 0
-        else:
-            net = last_a - last_b
+        no_value = last_a == 0 or last_b == 0
+        no_value_r = last_a_r == 0 or last_b_r == 0
+        
+        net = 0 if no_value else last_a - last_b
+        net_r = 0 if no_value_r else last_a_r - last_b_r
+
         y.append(net)
+        y_r.append(net_r)
     
     best_x = range_x[np.argmax(y)]
     best_y = max(y)
-    plt.title(title + f'\nbest x={best_x} y={best_y}')
-    plt.plot(range_x, y, color='pink')
+    best_x_r = range_x[np.argmax(y_r)]
+    best_y_r = max(y_r)
+
+    plt.title(title + f'\nbest {acc_dir} x={best_x} y={best_y} | {Direction.RIGHT} x={best_x_r} y={best_y_r}')
+    plt.plot(range_x, y, color=Clr.ROSE)
     plt.vlines(best_x, -10, 10)
+    #################
+    plt.plot(range_x, y_r, color=Clr.LAVENDER)
+    plt.vlines(best_x_r, -10, 10)
+    #################
     plt.hlines(0, min(range_x), max(range_x))
     plt.rcParams['figure.facecolor'] = background
     plt.tight_layout()
