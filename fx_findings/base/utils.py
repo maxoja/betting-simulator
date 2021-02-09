@@ -64,8 +64,10 @@ def remove_nan(a):
 __point_size_of = {
     Quote.AUDCAD: 0.00001,
     Quote.AUDNZD: 0.00001,
+    Quote.CHFJPY: 0.001,
     Quote.EURCHF: 0.00001,
     Quote.EURUSD: 0.00001,
+    Quote.GBPNZD: 0.00001,
     Quote.USDJPY: 0.001
 }
 

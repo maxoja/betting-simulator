@@ -68,7 +68,7 @@ def run(TARGET_TIMEFRAME:Timeframe, TARGET_QUOTE:Quote, TARGET_BROKER:Broker):
     # TARGET_QUOTE = Quote.AUDCAD
     # TARGET_TIMEFRAME = Timeframe.M20
 
-    ratio, base_spread, broke_spread = analyse_broker_spread_ratio(TARGET_TIMEFRAME, TARGET_QUOTE, TARGET_BROKER)
+    # ratio, base_spread, broke_spread = analyse_broker_spread_ratio(TARGET_TIMEFRAME, TARGET_QUOTE, TARGET_BROKER)
 
     day_spread_broke = analyse_weekday_spread(TARGET_TIMEFRAME, TARGET_QUOTE, TARGET_BROKER)
     plotting.plot_dict_as_bars(day_spread_broke, title=f"Day Spread - {TARGET_BROKER}")
