@@ -10,11 +10,20 @@ class Timeframe(str, Enum):
 
 class Quote(str, Enum):
     AUDCAD = 'AUDCAD'
+    AUDCHF = 'AUDCHF'
+    AUDJPY = 'AUDJPY'
     AUDNZD = 'AUDNZD'
+    AUDUSD = 'AUDUSD'
     CHFJPY = 'CHFJPY'
+    EURCAD = 'EURCAD'
     EURCHF = 'EURCHF'
     EURUSD = 'EURUSD'
+    GBPAUD = 'GBPAUD'
+    GBPCHF = 'GBPCHF'
+    GBPCAD = 'GBPCAD'
+    GBPJPY = 'GBPJPY'
     GBPNZD = 'GBPNZD'
+    GBPUSD = 'GBPUSD'
     USDJPY = 'USDJPY'
 
 class Col(str, Enum):
