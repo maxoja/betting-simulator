@@ -79,3 +79,18 @@ def run(TARGET_TIMEFRAME:Timeframe, TARGET_QUOTE:Quote, TARGET_BROKER:Broker):
             plotting.plot_dict_as_bars(time_spread_broke, title=f"{str_of_weekday[i]} - Time Spread - {TARGET_BROKER}")
 
     plotting.block()
+
+def run_all(TARGET_TIMEFRAME:Timeframe, TARGET_BROKER:Broker):
+    structured_result = {}
+
+    for pair in Quote:
+        spread_of_time = analyse_time_spread(TARGET_TIMEFRAME, pair, TARGET_BROKER)
+        spreads = spread_of_time.values()
+        spreads = sorted(spreads)
+        # min_spread, max_spread = min(spreads), max(spreads)
+        percentile_85 = spreads[len(spreads)*85//100]
+        print(pair, percentile_85)
+        # print(pair, min_spread, percentile_80, max_spread)
+        structured_result[''+pair] = percentile_85
+
+    print(structured_result)
