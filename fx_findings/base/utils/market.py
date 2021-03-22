@@ -1,10 +1,12 @@
 from ..enums import Quote, Col, Timeframe
 
+YEARLY_TRADING_DAYS = 252
+
 __annual_bars_of = {
-    Timeframe.D1: 261,
-    Timeframe.H4: 261*6,
-    Timeframe.H1: 261*24,
-    Timeframe.M20: 261*24*3,
+    Timeframe.D1: YEARLY_TRADING_DAYS,
+    Timeframe.H4: YEARLY_TRADING_DAYS*6,
+    Timeframe.H1: YEARLY_TRADING_DAYS*24,
+    Timeframe.M20: YEARLY_TRADING_DAYS*24*3,
 }
 
 
