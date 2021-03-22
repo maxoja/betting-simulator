@@ -37,26 +37,6 @@ def pip_size(quote:Quote):
 def annual_bars(timeframe:Timeframe):
     return __annual_bars_of[timeframe]
 
-
-def sorted_dict(d):
-    return { k:d[k] for k in sorted(d.keys()) }
-
-
-def shift_right_with_nan(a):
-    a = np.concatenate(([np.NaN], a))
-    a = a[:-1]
-    return a
-
-
-def shift_left(a, val=np.NaN):
-    a = np.concatenate((a,[val]))
-    a = a[1:]
-    return a
-
-def remove_nan(a):
-    non_nan_idx = np.isnan(a)
-    return a[~non_nan_idx]
-
 __point_size_of = {
     Quote.AUDCAD: 0.00001,
     Quote.AUDCHF: 0.00001,

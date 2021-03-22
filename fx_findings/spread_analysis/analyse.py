@@ -23,7 +23,7 @@ def analyse_weekday_spread(timeframe:Timeframe, quote:Quote, broker:Broker):
             spread_values[key] = [spread]
 
     spread_avg = arith_utils.avg_dict(spread_values)
-    return utils.sorted_dict(spread_avg)
+    return arith_utils.sorted_dict(spread_avg)
 
 def analyse_time_spread(timeframe:Timeframe, quote:Quote, broker:Broker, weekday=None):
     df, meta = loader.load_price_dataset(timeframe, quote, broker)
@@ -43,7 +43,7 @@ def analyse_time_spread(timeframe:Timeframe, quote:Quote, broker:Broker, weekday
             spread_values[key] = [spread]
 
     spread_avg = arith_utils.avg_dict(spread_values)
-    return utils.sorted_dict(spread_avg)
+    return arith_utils.sorted_dict(spread_avg)
             
 
 def analyse_broker_spread_ratio(timeframe:Timeframe, quote:Quote, broker:Broker):
