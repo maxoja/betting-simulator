@@ -14,7 +14,7 @@ agg_aud += 100
 
 reproduced_gbpaud = agg_gbp/agg_aud*100
 
-df, meta = loader.load(Timeframe.D1, Quote.GBPAUD, None)
+df, meta = loader.load_price_dataset(Timeframe.D1, Quote.GBPAUD, None)
 body_series = df[Col.BODY]*utils.point_size(meta.quote)
 open_series = df[Col.OPEN]
 prop_change = body_series/open_series*100

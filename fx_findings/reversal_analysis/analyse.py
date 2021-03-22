@@ -104,7 +104,7 @@ def run():
             for holding in PARAM_HOLDING:
                 settings = Settings(QUOTE, TIMEFRAME, period, padding, holding)
                 print(settings.as_str())
-                df, meta = loader.load(settings.timeframe, settings.quote)
+                df, meta = loader.load_price_dataset(settings.timeframe, settings.quote)
                 entries = entry_points_rsi_reversal(df, settings, None)
                 # analyse_position_progression(df, entries, win_size=3)
                 print(entries.size())

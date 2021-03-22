@@ -14,7 +14,7 @@ class Meta:
         self.broker = brk
 
 
-def load(timeframe:Timeframe, quote:Quote, broker:Broker=None):
+def load_price_dataset(timeframe:Timeframe, quote:Quote, broker:Broker=None):
     meta = Meta(timeframe, quote, broker)
     cache_key = (timeframe, quote, broker)
 

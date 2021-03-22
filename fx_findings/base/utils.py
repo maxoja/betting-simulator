@@ -2,7 +2,7 @@ import numpy as np
 from .enums import Quote, Col, Timeframe, PosType
 
 
-def slice_frame1(df, size, shift_end=0, buffer=0):
+def slice_frame_from_back(df, size, shift_end=0, buffer=0):
     if shift_end < 0 or size+buffer+shift_end >= len(df):
         return None
         
@@ -11,9 +11,13 @@ def slice_frame1(df, size, shift_end=0, buffer=0):
     return df[start:end]
 
 
-def slice_frame2(df, size, shift_front=0, buffer=0):
+def slice_frame_from_front(df, size, shift_front=0, buffer=0):
     start = shift_front - buffer
     end = shift_front + size
+
+    if start < 0 or end >= len(df):
+        raise ValueError()
+
     return df[start:end]
 
 

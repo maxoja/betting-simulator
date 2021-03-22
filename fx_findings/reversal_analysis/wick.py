@@ -8,10 +8,10 @@ from ..base import utils
 from ..base import plotting
 
 def run(timeframe:Timeframe=Timeframe.D1, quote:Quote=Quote.USDJPY, pos_type:PosType=PosType.LONG):
-    df, meta = loader.load(timeframe, quote)
+    df, meta = loader.load_price_dataset(timeframe, quote)
     bars_2_years = 2*utils.annual_bars(timeframe)
     if len(df) > bars_2_years:
-        df = utils.slice_frame1(df, bars_2_years)
+        df = utils.slice_frame_from_back(df, bars_2_years)
     data_size = len(df)
 
     wick_t = df[Col.WICK_T]

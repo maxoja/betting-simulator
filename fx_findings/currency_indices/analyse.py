@@ -17,7 +17,7 @@ def run(currency='GBP'):
     quotes = relatives[currency]
 
     for quote in quotes:
-        dataframe, meta = loader.load(timeframe, quote, broker)
+        dataframe, meta = loader.load_price_dataset(timeframe, quote, broker)
         frames.append(dataframe)
         metas.append(meta)
 
