@@ -3,7 +3,7 @@ import numpy as np
 from ..base.enums import Timeframe, Quote, Broker, Col
 from ..base import loader
 from ..base import plotting
-from ..utils import market as utils_market
+from ..base import utils
 
 relatives = {
     'GBP' : ['GBPJPY', 'GBPUSD', 'GBPCAD', 'GBPNZD', 'GBPCHF'],
@@ -26,7 +26,7 @@ def run(currency='GBP'):
     for dataframe, meta in zip(frames, metas):
         # close_series = dataframe[Col.CLOSE]
         # plotting.plot_lines([close_series], 'Close series of ' + meta.quote)
-        body_series = dataframe[Col.BODY] * utils_market.point_size(meta.quote) # convert from points to price
+        body_series = dataframe[Col.BODY] * utils.market.point_size(meta.quote) # convert from points to price
         open_series = dataframe[Col.OPEN]
         percent_change_series = body_series / open_series * 100
         # plotting.plot_lines([percent_change_series], 'Percent change of ' + meta.quote)

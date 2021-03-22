@@ -1,4 +1,4 @@
-from ..base.enums import Quote, Col, Timeframe
+from ..enums import Quote, Col, Timeframe
 
 __point_size_of = {
     Quote.AUDCAD: 0.00001,

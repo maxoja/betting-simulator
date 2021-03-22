@@ -1,7 +1,7 @@
 import os
 import pandas
 from .enums import Timeframe, Quote, Broker, Col
-from ..utils import market as utils_market
+from . import utils
 
 
 cache = dict()
@@ -46,7 +46,7 @@ def load_price_dataset(timeframe:Timeframe, quote:Quote, broker:Broker=None):
 
 
 def _destructure_candles(df, df_meta:Meta):
-    point_size = utils_market.point_size(df_meta.quote)
+    point_size = utils.market.point_size(df_meta.quote)
     wick_t, wick_b, body, rise, fall, height = [], [], [], [], [], []
     zipped_ohcl = zip(df[Col.OPEN]/point_size, df[Col.CLOSE]/point_size, df[Col.HIGH]/point_size, df[Col.LOW]/point_size)
 

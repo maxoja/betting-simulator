@@ -1,5 +1,5 @@
 import pandas as pd
-from ..utils.pandas import EntryIndices, IndexRange
+from ..base.utils.pandas import EntryIndices, IndexRange
 from ..base.enums import PosType, Col
 from ..base.plotting import plot_lines, block, plot_histogram, plot_outward_cumulative_hist, plot_for_stoploss
 

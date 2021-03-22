@@ -5,8 +5,7 @@ from ..base.enums import Timeframe, Quote, Col, Broker, PosType
 from ..base import loader
 from ..base import plotting
 from ..stoploss_analysis import stoploss_analyse
-from ..utils import arith as arith_utils
-from ..utils.pandas import EntryIndices, IndexRange, Index
+from ..base.utils.pandas import EntryIndices, IndexRange, Index
 
 OUTPUT_DIR = './out/rsi_reversal/'
 RSI_PERIOD = 14
@@ -80,11 +79,11 @@ def analyse_position_progression(df, entries:EntryIndices, win_size=1, plot=True
     total_long = len(long_diff)
 
     if total_short > 0:
-        print('shorts', total_short, arith_utils.avg(short_diff))
+        print('shorts', total_short, utils.arith.avg(short_diff))
     if total_long > 0:
-        print('longs  ', total_long, arith_utils.avg(long_diff))
+        print('longs  ', total_long, utils.arith.avg(long_diff))
     if total_short > 0 and total_long > 0:
-        print('weighted  ', total_short+total_long, arith_utils.avg(list(map(lambda x: -x, short_diff)) + long_diff) )
+        print('weighted  ', total_short+total_long, utils.arith.avg(list(map(lambda x: -x, short_diff)) + long_diff) )
     
     if plot:
         plotting.plot_histogram(short_diff, title="short prof/loss")

@@ -1,4 +1,4 @@
-from ..base.enums import PosType
+from ..enums import PosType
 
 
 def slice_frame_from_back(df, size, shift_end=0, buffer=0):
