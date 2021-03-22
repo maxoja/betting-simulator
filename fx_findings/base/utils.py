@@ -26,14 +26,6 @@ def average_spread(df):
     return sum(series)/len(series)
 
 
-def avg(l):
-    return sum(l)/len(l)
-
-
-def avg_dict(d):
-    return {key:avg(val) for key,val in d.items()}
-
-
 def point_size(quote:Quote):
     return __point_size_of[quote]
 

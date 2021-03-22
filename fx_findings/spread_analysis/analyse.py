@@ -2,6 +2,7 @@ from ..base.enums import Timeframe, Quote, Broker, Col
 from ..base import loader
 from ..base import utils
 from ..base import plotting
+from ..utils import arith as arith_utils
 
 str_of_weekday = ['0-Mon', '1-Tue', '2-Wed', '3-Thu', '4-Fri', '5-Sat', '6-Sun']
 
@@ -21,7 +22,7 @@ def analyse_weekday_spread(timeframe:Timeframe, quote:Quote, broker:Broker):
         else:
             spread_values[key] = [spread]
 
-    spread_avg = utils.avg_dict(spread_values)
+    spread_avg = arith_utils.avg_dict(spread_values)
     return utils.sorted_dict(spread_avg)
 
 def analyse_time_spread(timeframe:Timeframe, quote:Quote, broker:Broker, weekday=None):
@@ -41,7 +42,7 @@ def analyse_time_spread(timeframe:Timeframe, quote:Quote, broker:Broker, weekday
         else:
             spread_values[key] = [spread]
 
-    spread_avg = utils.avg_dict(spread_values)
+    spread_avg = arith_utils.avg_dict(spread_values)
     return utils.sorted_dict(spread_avg)
             
 
