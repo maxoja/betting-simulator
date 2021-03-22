@@ -4,7 +4,7 @@ from fx_findings.base.enums import *
 from fx_findings import currency_indices
 from fx_findings.base import plotting
 from fx_findings.base import loader
-from fx_findings.base import utils
+from fx_findings.utils import market as utils_market
 
 agg_gbp = currency_indices.run('GBP')
 agg_aud = currency_indices.run('AUD')
@@ -15,7 +15,7 @@ agg_aud += 100
 reproduced_gbpaud = agg_gbp/agg_aud*100
 
 df, meta = loader.load_price_dataset(Timeframe.D1, Quote.GBPAUD, None)
-body_series = df[Col.BODY]*utils.point_size(meta.quote)
+body_series = df[Col.BODY]*utils_market.point_size(meta.quote)
 open_series = df[Col.OPEN]
 prop_change = body_series/open_series*100
 original_gbpaud = np.cumsum(prop_change) + 100
