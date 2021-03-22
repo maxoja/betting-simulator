@@ -1,5 +1,4 @@
-import numpy as np
-from .enums import Quote, Col, Timeframe, PosType
+from ..base.enums import PosType
 
 
 def slice_frame_from_back(df, size, shift_end=0, buffer=0):

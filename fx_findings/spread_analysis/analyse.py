@@ -1,15 +1,15 @@
 from ..base.enums import Timeframe, Quote, Broker, Col
 from ..base import loader
-from ..base import utils
 from ..base import plotting
 from ..utils import arith as arith_utils
 from ..utils import market as utils_market
+from ..utils import pandas as utils_pandas
 
 str_of_weekday = ['0-Mon', '1-Tue', '2-Wed', '3-Thu', '4-Fri', '5-Sat', '6-Sun']
 
 def analyse_weekday_spread(timeframe:Timeframe, quote:Quote, broker:Broker):
     df, meta = loader.load_price_dataset(timeframe, quote, broker)
-    df = utils.slice_frame_from_back(df, utils_market.annual_bars(timeframe)//2)
+    df = utils_pandas.slice_frame_from_back(df, utils_market.annual_bars(timeframe)//2)
     spread_values = dict()
     col_datetime = df[Col.DATETIME]
     col_spread = df[Col.SPREAD]
@@ -28,7 +28,7 @@ def analyse_weekday_spread(timeframe:Timeframe, quote:Quote, broker:Broker):
 
 def analyse_time_spread(timeframe:Timeframe, quote:Quote, broker:Broker, weekday=None):
     df, meta = loader.load_price_dataset(timeframe, quote, broker)
-    df = utils.slice_frame_from_back(df, utils_market.annual_bars(timeframe)//2)
+    df = utils_pandas.slice_frame_from_back(df, utils_market.annual_bars(timeframe)//2)
     spread_values = dict()
     col_datetime = df[Col.DATETIME]
     col_spread = df[Col.SPREAD]
@@ -49,12 +49,12 @@ def analyse_time_spread(timeframe:Timeframe, quote:Quote, broker:Broker, weekday
 
 def analyse_broker_spread_ratio(timeframe:Timeframe, quote:Quote, broker:Broker):
     df, meta = loader.load_price_dataset(timeframe, quote, None)
-    df = utils.slice_frame_from_back(df, utils_market.annual_bars(timeframe)//2)
+    df = utils_pandas.slice_frame_from_back(df, utils_market.annual_bars(timeframe)//2)
     tickstory_spread = utils_market.average_spread(df)
     tickstory_len = len(df)
 
     df, meta = loader.load_price_dataset(timeframe, quote, broker)
-    df = utils.slice_frame_from_back(df, utils_market.annual_bars(timeframe)//2)
+    df = utils_pandas.slice_frame_from_back(df, utils_market.annual_bars(timeframe)//2)
     broker_spread = utils_market.average_spread(df)
     broker_len = len(df)
 

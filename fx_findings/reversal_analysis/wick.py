@@ -4,16 +4,16 @@ import pandas as pd
 
 from ..base.enums import Timeframe, Quote, Col, Broker, PosType, Direction, Clr
 from ..base import loader
-from ..base import utils
 from ..base import plotting
 from ..utils import arith as utils_arith
 from ..utils import market as utils_market
+from ..utils import pandas as utils_pandas
 
 def run(timeframe:Timeframe=Timeframe.D1, quote:Quote=Quote.USDJPY, pos_type:PosType=PosType.LONG):
     df, meta = loader.load_price_dataset(timeframe, quote)
     bars_2_years = 2*utils_market.annual_bars(timeframe)
     if len(df) > bars_2_years:
-        df = utils.slice_frame_from_back(df, bars_2_years)
+        df = utils_pandas.slice_frame_from_back(df, bars_2_years)
     data_size = len(df)
 
     wick_t = df[Col.WICK_T]

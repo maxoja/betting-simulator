@@ -3,10 +3,10 @@ import talib
 
 from ..base.enums import Timeframe, Quote, Col, Broker, PosType
 from ..base import loader
-from ..base import utils
 from ..base import plotting
 from ..stoploss_analysis import stoploss_analyse
 from ..utils import arith as arith_utils
+from ..utils.pandas import EntryIndices, IndexRange, Index
 
 OUTPUT_DIR = './out/rsi_reversal/'
 RSI_PERIOD = 14
@@ -26,7 +26,7 @@ class Settings:
         return f'quote={self.quote}|timeframe={self.timeframe}|rsi_period={self.rsi_period}|padding={self.padding_thresh}'
 
 # entry at index i mean you open a trade after the bar at index i is closed
-def entry_points_rsi_reversal(df, settings:Settings, irange:utils.IndexRange=None) -> utils.EntryIndices:
+def entry_points_rsi_reversal(df, settings:Settings, irange:IndexRange=None) -> EntryIndices:
     sliced_df = irange.sliced_of(df) if irange else df
     close_series = sliced_df[Col.CLOSE].reset_index(drop=True)
     rsi_series = talib.RSI(close_series, settings.rsi_period)
@@ -49,13 +49,13 @@ def entry_points_rsi_reversal(df, settings:Settings, irange:utils.IndexRange=Non
                 continue
 
         if current_rsi >= 100-settings.padding_thresh:
-            entries.append(utils.Index(irange, i), PosType.SHORT)
+            entries.append(Index(irange, i), PosType.SHORT)
         if current_rsi <= settings.padding_thresh:
-            entries.append(utils.Index(irange, i), PosType.LONG)
+            entries.append(Index(irange, i), PosType.LONG)
 
     return entries
     
-def analyse_position_progression(df, entries:utils.EntryIndices, win_size=1, plot=True):
+def analyse_position_progression(df, entries:EntryIndices, win_size=1, plot=True):
     close = df[Col.CLOSE]
 
     long_diff = []
