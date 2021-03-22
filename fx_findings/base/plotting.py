@@ -1,32 +1,51 @@
 import matplotlib.pyplot as plt
 from matplotlib.ticker import (AutoMinorLocator, MultipleLocator)
 import numpy as np
+from ..base.enums import Direction, Clr
 
-def plot_lines_unblock(lines, title=""):
+def plot_boxes(samples, labels, block=False):
+    plt.figure()
+    plt.boxplot(samples, labels=labels)
+    plt.show(block=block)
+
+def plot_lines(lines, title="", block=False):
     plt.figure()
     plt.title(title)
     for line in lines:
         plt.plot(line)
-    plt.show(block=False)
+    plt.show(block=block)
 
-def plot_histogram_unblock(sample_data, title=""):
-    plt.figure(title)
-    plt.hist(sample_data, bins=128)
-    plt.show(block=False)
+def plot_histogram(sample_data, title="", color=None, block=False):
+    plt.figure()
+    plt.title(title)
+    plt.hist(sample_data, color=color, bins=128)
+    plt.show(block=block)
 
-def plot_dict_as_barchart(d, title="", block=False):
+def plot_scatter(x, y, clr='blue', title="", block=False):
+    plt.figure()
+    plt.title(title)
+    if not type(y) is tuple:
+        y = [y]
+    if not type(clr) is tuple:
+        clr = [clr]
+    for y_set, c in zip(y, clr):
+        plt.scatter(x, y_set, c=c, s=2, alpha=0.5)
+    plt.show(block=block)
+
+def plot_dict_as_bars(d, title="", block=False):
     plt.figure()
     plt.title(title)
     plt.grid(axis='y')
-    print(d.keys())
     plt.bar(d.keys(), d.values())
+    plt.xticks(rotation = 90)
+    plt.tight_layout()
     plt.show(block=block)
 
-def plot_centered_cumulative_histogram(sample_data, center_val=0, title=""):
+def plot_outward_cumulative_hist(sample_data, center_val=0, title="", block=False):
     if not sample_data:
         plt.figure(title)
         plt.plot([])
-        plt.show(block=False)
+        plt.show(block=block)
         return
     sample_data = sorted(sample_data)
     center_index = min(range(len(sample_data)), key=lambda i: abs(center_val-sample_data[i]))
@@ -36,15 +55,128 @@ def plot_centered_cumulative_histogram(sample_data, center_val=0, title=""):
     plt.plot(count_x, count_y)
     weights = np.ones_like(sample_data)/float(len(sample_data))*50
     plt.hist(sample_data, weights=weights, bins=128)
-    plt.show(block=False)
+    plt.show(block=block)
+
+# use case 1:   You know the RSI value at each trade and also the trade results.
+#               The trades are categorised into 2 groups, gain and loss groups.
+#               This plot visualises and help choosing which RSI thresholdis best
+#               to exclude as many loss trades and remain as many gain trades.
+def plot_threshold_cross_cumulation(prefer_group, unprefer_group, acc_dir:Direction=None, background='white', normalise=False, title="", block=False):
+    if len(prefer_group) + len(unprefer_group) == 0:
+        plt.figure()
+        plt.title(title)
+        plt.plot([])
+        plt.show(block=block)
+        return
+        
+    old_background = plt.rcParams['figure.facecolor']
+    plt.rcParams['figure.facecolor'] = background
+
+    if acc_dir == None:
+        _, axs = plt.subplots(2,1, sharex=True)
+        ax1 = axs[0]
+        ax2 = axs[1]
+    else:
+        if acc_dir == Direction.LEFT:
+            _, ax1 = plt.subplots(1,1)
+        if acc_dir == Direction.RIGHT:
+            _, ax2 = plt.subplots(1,1)
+    
+    len_prefer = len(prefer_group)
+    len_unprefer = len(unprefer_group)
+    prefer_group = sorted(prefer_group)
+    unprefer_group = sorted(unprefer_group)
+
+    x_a = prefer_group[::]
+    x_b = unprefer_group[::]
+
+    if normalise:
+        y_a = list(np.arange(len_prefer)/len_prefer*100)
+        y_b = list(np.arange(len_unprefer)/len_unprefer*100)
+    else:
+        y_a = list(range(len_prefer))
+        y_b = list(range(len_unprefer))
+    
+    y_a_l = y_a[::-1]
+    y_b_l = y_b[::-1]
+    y_a_r = y_a[::]
+    y_b_r = y_b[::]
+
+    if acc_dir in [None, Direction.LEFT]:
+        ax1.plot(x_a, y_a_l, color=Clr.DEFAULT_BLUE)
+        ax1.plot(x_b, y_b_l, color=Clr.RED)
+
+    if acc_dir in [None, Direction.RIGHT]:
+        ax2.plot(x_a, y_a_r, color=Clr.DEFAULT_BLUE)
+        ax2.plot(x_b, y_b_r, color=Clr.RED)
+    
+    min_x = int(min(x_a + x_b))
+    max_x = int(max(x_a + x_b))
+    range_x = range(min_x-1, max_x+1)
+    y_l = []
+    y_r = []
+    net_l = 0
+    net_r = 0
+    last_a_l = 0
+    last_a_r = 0
+    last_b_l = 0
+    last_b_r = 0
+
+    for x in range_x:
+        while x_a and x_a[0] <= x:
+            last_a_r = y_a_r[0]
+            last_a_l = y_a_l[0]
+            y_a_r.pop(0)
+            y_a_l.pop(0)
+            x_a.pop(0)
+
+        while x_b and x_b[0] <= x:
+            last_b_r = y_b_r[0]
+            last_b_l = y_b_l[0]
+            y_b_r.pop(0)
+            y_b_l.pop(0)
+            x_b.pop(0)
+
+        no_value = last_a_l == 0 or last_b_l == 0
+        no_value_r = last_a_r == 0 or last_b_r == 0
+        
+        net_l = np.NaN if no_value else last_a_l - last_b_l
+        net_r = np.NaN if no_value_r else last_a_r - last_b_r
+
+        y_l.append(net_l)
+        y_r.append(net_r)
+    
+    best_x_l = range_x[np.nanargmax(y_l)]
+    best_y_l = np.nanmax(y_l)
+    best_x_r = range_x[np.nanargmax(y_r)]
+    best_y_r = np.nanmax(y_r)
+
+    plt.suptitle(title)
+
+    if acc_dir in [None, Direction.LEFT]:
+        ax1.set_title(f'\n\nWHEN X > {best_x_l}, DELTA = {best_y_l}')
+        ax1.hlines(0, min(range_x), max(range_x))
+        ax1.plot(range_x, y_l, color=Clr.ROSE)
+        ax1.vlines(best_x_l, -10, 10)
+
+    if acc_dir in [None, Direction.RIGHT]:
+        ax2.set_title(f'\n\nWHEN X < {best_x_r}, DELTA = {best_y_r}')
+        ax2.hlines(0, min(range_x), max(range_x))
+        ax2.plot(range_x, y_r, color=Clr.LAVENDER)
+        ax2.vlines(best_x_r, -10, 10)
+        
+    plt.rcParams['figure.facecolor'] = old_background
+    plt.tight_layout()
+    plt.show(block=block)
+    return best_y_l
 
 
-def plot_for_stoploss(sample_data, profits, center_val=0, title=""):
+def plot_for_stoploss(sample_data, profits, center_val=0, title="", block=False):
     if not sample_data:
         plt.figure()
         plt.title(title)
         plt.plot([])
-        plt.show(block=False)
+        plt.show(block=block)
         return
 
     _, axs = plt.subplots(3,1, sharex=True)
@@ -105,8 +237,7 @@ def plot_for_stoploss(sample_data, profits, center_val=0, title=""):
     ax3.vlines(-0.00001*200, 0, max(recovery), color=BLACK)
     ax3.yaxis.set_major_locator(MultipleLocator(1))
     ax3.grid(True)
-    plt.show(block=False) 
+    plt.show(block=block) 
 
-
-def show_plot():
+def block():
     plt.show()

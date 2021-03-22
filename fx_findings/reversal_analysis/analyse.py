@@ -86,11 +86,11 @@ def analyse_position_progression(df, entries:utils.EntryIndices, win_size=1, plo
         print('weighted  ', total_short+total_long, utils.avg(list(map(lambda x: -x, short_diff)) + long_diff) )
     
     if plot:
-        plotting.plot_histogram_unblock(short_diff, title="short prof/loss")
-        plotting.plot_histogram_unblock(long_diff, title="long prof/loss")
-        plotting.plot_centered_cumulative_histogram(short_diff, title="accumulated hist for short positions")
-        plotting.plot_centered_cumulative_histogram(long_diff, title="accumulated hist for long positions")
-        plotting.show_plot()
+        plotting.plot_histogram(short_diff, title="short prof/loss")
+        plotting.plot_histogram(long_diff, title="long prof/loss")
+        plotting.plot_outward_cumulative_hist(short_diff, title="accumulated hist for short positions")
+        plotting.plot_outward_cumulative_hist(long_diff, title="accumulated hist for long positions")
+        plotting.block()
 
 def run():
     QUOTE = Quote.AUDCAD
@@ -104,7 +104,7 @@ def run():
             for holding in PARAM_HOLDING:
                 settings = Settings(QUOTE, TIMEFRAME, period, padding, holding)
                 print(settings.as_str())
-                df = loader.load(settings.timeframe, settings.quote)
+                df, meta = loader.load(settings.timeframe, settings.quote)
                 entries = entry_points_rsi_reversal(df, settings, None)
                 # analyse_position_progression(df, entries, win_size=3)
                 print(entries.size())
