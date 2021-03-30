@@ -1,1 +1,1 @@
-from .analyse import run
+from .analyse import run, run_all

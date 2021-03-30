@@ -69,6 +69,9 @@ def plot_threshold_cross_cumulation(prefer_group, unprefer_group, acc_dir:Direct
         plt.show(block=block)
         return
         
+    old_background = plt.rcParams['figure.facecolor']
+    plt.rcParams['figure.facecolor'] = background
+
     if acc_dir == None:
         _, axs = plt.subplots(2,1, sharex=True)
         ax1 = axs[0]
@@ -137,16 +140,16 @@ def plot_threshold_cross_cumulation(prefer_group, unprefer_group, acc_dir:Direct
         no_value = last_a_l == 0 or last_b_l == 0
         no_value_r = last_a_r == 0 or last_b_r == 0
         
-        net_l = 0 if no_value else last_a_l - last_b_l
-        net_r = 0 if no_value_r else last_a_r - last_b_r
+        net_l = np.NaN if no_value else last_a_l - last_b_l
+        net_r = np.NaN if no_value_r else last_a_r - last_b_r
 
         y_l.append(net_l)
         y_r.append(net_r)
     
-    best_x_l = range_x[np.argmax(y_l)]
-    best_y_l = max(y_l)
-    best_x_r = range_x[np.argmax(y_r)]
-    best_y_r = max(y_r)
+    best_x_l = range_x[np.nanargmax(y_l)]
+    best_y_l = np.nanmax(y_l)
+    best_x_r = range_x[np.nanargmax(y_r)]
+    best_y_r = np.nanmax(y_r)
 
     plt.suptitle(title)
 
@@ -157,12 +160,12 @@ def plot_threshold_cross_cumulation(prefer_group, unprefer_group, acc_dir:Direct
         ax1.vlines(best_x_l, -10, 10)
 
     if acc_dir in [None, Direction.RIGHT]:
-        ax2.set_title(f'WHEN X < {best_x_r}, DELTA = {best_y_r}')
+        ax2.set_title(f'\n\nWHEN X < {best_x_r}, DELTA = {best_y_r}')
         ax2.hlines(0, min(range_x), max(range_x))
         ax2.plot(range_x, y_r, color=Clr.LAVENDER)
         ax2.vlines(best_x_r, -10, 10)
         
-    plt.rcParams['figure.facecolor'] = background
+    plt.rcParams['figure.facecolor'] = old_background
     plt.tight_layout()
     plt.show(block=block)
     return best_y_l

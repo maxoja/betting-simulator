@@ -14,7 +14,7 @@ class Meta:
         self.broker = brk
 
 
-def load(timeframe:Timeframe, quote:Quote, broker:Broker=None):
+def load_price_dataset(timeframe:Timeframe, quote:Quote, broker:Broker=None):
     meta = Meta(timeframe, quote, broker)
     cache_key = (timeframe, quote, broker)
 
@@ -46,7 +46,7 @@ def load(timeframe:Timeframe, quote:Quote, broker:Broker=None):
 
 
 def _destructure_candles(df, df_meta:Meta):
-    point_size = utils.point_size(df_meta.quote)
+    point_size = utils.market.point_size(df_meta.quote)
     wick_t, wick_b, body, rise, fall, height = [], [], [], [], [], []
     zipped_ohcl = zip(df[Col.OPEN]/point_size, df[Col.CLOSE]/point_size, df[Col.HIGH]/point_size, df[Col.LOW]/point_size)
 

@@ -3,9 +3,9 @@ import talib
 
 from ..base.enums import Timeframe, Quote, Col, Broker, PosType
 from ..base import loader
-from ..base import utils
 from ..base import plotting
 from ..stoploss_analysis import stoploss_analyse
+from ..base.utils.pandas import EntryIndices, IndexRange, Index
 
 OUTPUT_DIR = './out/rsi_reversal/'
 RSI_PERIOD = 14
@@ -25,7 +25,7 @@ class Settings:
         return f'quote={self.quote}|timeframe={self.timeframe}|rsi_period={self.rsi_period}|padding={self.padding_thresh}'
 
 # entry at index i mean you open a trade after the bar at index i is closed
-def entry_points_rsi_reversal(df, settings:Settings, irange:utils.IndexRange=None) -> utils.EntryIndices:
+def entry_points_rsi_reversal(df, settings:Settings, irange:IndexRange=None) -> EntryIndices:
     sliced_df = irange.sliced_of(df) if irange else df
     close_series = sliced_df[Col.CLOSE].reset_index(drop=True)
     rsi_series = talib.RSI(close_series, settings.rsi_period)
@@ -48,13 +48,13 @@ def entry_points_rsi_reversal(df, settings:Settings, irange:utils.IndexRange=Non
                 continue
 
         if current_rsi >= 100-settings.padding_thresh:
-            entries.append(utils.Index(irange, i), PosType.SHORT)
+            entries.append(Index(irange, i), PosType.SHORT)
         if current_rsi <= settings.padding_thresh:
-            entries.append(utils.Index(irange, i), PosType.LONG)
+            entries.append(Index(irange, i), PosType.LONG)
 
     return entries
     
-def analyse_position_progression(df, entries:utils.EntryIndices, win_size=1, plot=True):
+def analyse_position_progression(df, entries:EntryIndices, win_size=1, plot=True):
     close = df[Col.CLOSE]
 
     long_diff = []
@@ -79,11 +79,11 @@ def analyse_position_progression(df, entries:utils.EntryIndices, win_size=1, plo
     total_long = len(long_diff)
 
     if total_short > 0:
-        print('shorts', total_short, utils.avg(short_diff))
+        print('shorts', total_short, utils.arith.avg(short_diff))
     if total_long > 0:
-        print('longs  ', total_long, utils.avg(long_diff))
+        print('longs  ', total_long, utils.arith.avg(long_diff))
     if total_short > 0 and total_long > 0:
-        print('weighted  ', total_short+total_long, utils.avg(list(map(lambda x: -x, short_diff)) + long_diff) )
+        print('weighted  ', total_short+total_long, utils.arith.avg(list(map(lambda x: -x, short_diff)) + long_diff) )
     
     if plot:
         plotting.plot_histogram(short_diff, title="short prof/loss")
@@ -104,7 +104,7 @@ def run():
             for holding in PARAM_HOLDING:
                 settings = Settings(QUOTE, TIMEFRAME, period, padding, holding)
                 print(settings.as_str())
-                df, meta = loader.load(settings.timeframe, settings.quote)
+                df, meta = loader.load_price_dataset(settings.timeframe, settings.quote)
                 entries = entry_points_rsi_reversal(df, settings, None)
                 # analyse_position_progression(df, entries, win_size=3)
                 print(entries.size())
