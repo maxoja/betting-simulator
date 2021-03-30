@@ -1,4 +1,7 @@
 ### Todo
+- On D1 and H4 timeframe, compare averaged volatility of single bar chunked by weekday/hour
+- On D1 and H1 timeframe, find the ratio of true range and volatility
+
 ### Later
 
 ### Done
