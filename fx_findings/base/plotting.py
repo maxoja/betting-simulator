@@ -41,6 +41,21 @@ def plot_dict_as_bars(d, title="", block=False):
     plt.tight_layout()
     plt.show(block=block)
 
+def plot_dict_as_line(d, title="", min_value=0, block=False):
+    plt.figure()
+    plt.title(title)
+    plt.grid(axis='y')
+    if type(d) is list:
+        for _d in d:
+            plt.plot(list(_d.values()))
+        d = d[0]
+    else:
+        plt.plot(list(d.values()))
+    plt.xticks(range(len(d.values())), list(d.keys()), rotation=90)
+    plt.ylim(bottom = 0)
+    plt.tight_layout()
+    plt.show(block=block)
+
 def plot_outward_cumulative_hist(sample_data, center_val=0, title="", block=False):
     if not sample_data:
         plt.figure(title)
