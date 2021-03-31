@@ -53,7 +53,49 @@ def plot_dict_as_line(d, title="", min_value=0, block=False):
         plt.plot(list(d.values()))
     plt.legend()
     plt.xticks(range(len(d.values())), list(d.keys()), rotation=90)
-    plt.ylim(bottom = 0)
+    plt.ylim(bottom = min_value)
+    plt.tight_layout()
+    plt.show(block=block)
+
+def plot_dicts_as_stacked_ribbons(d, title="", min_value=0, block=False):
+    plt.figure()
+    plt.title(title)
+    plt.grid(axis='y')
+
+    if not type(d) is list:
+        d = [d]
+        
+    for i, _d in enumerate(d):
+        line_25 = []
+        line_50 = []
+        line_75 = []
+
+        for key, value in _d.items():
+            sorted_val = sorted(value)
+            size_val = len(value)
+            i_25 = int((size_val-1)*0.4)
+            i_50 = int((size_val-1)*0.5)
+            i_75 = int((size_val-1)*0.6)
+            v_25 = sorted_val[i_25]
+            v_50 = sorted_val[i_50]
+            v_75 = sorted_val[i_75]
+            line_25.append(v_25)
+            line_50.append(v_50)
+            line_75.append(v_75)
+
+        clr_mean = f'C{str(i+2)}'
+        clr_fill = 'C1'
+        label = str(i)
+        # plt.plot(range(len(_d)), line_25, clr_mean, linewidth=0.15)
+        plt.plot(range(len(_d)), line_50, clr_mean, label=label, linewidth=0.5)
+        # plt.plot(range(len(_d)), line_75, clr_mean, linewidth=0.15)
+        plt.fill_between(range(len(_d)), line_25, line_75, color=clr_fill,alpha = 0.1)
+        
+    d = d[0]
+        
+    plt.legend()
+    plt.xticks(range(len(d.values())), list(d.keys()), rotation=90)
+    plt.ylim(bottom = min_value)
     plt.tight_layout()
     plt.show(block=block)
 
