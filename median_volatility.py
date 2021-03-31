@@ -17,11 +17,12 @@ n_bar = N_YEAR*utils.market.annual_bars(meta.timeframe)//N_SLICE
 n_shift = n_bar
 
 avg_dicts = []
+dicts = []
 
 for slice_set in range(N_SLICE):
     sliced_df = utils.pandas.slice_frame_from_back(df, n_bar, slice_set*n_shift)
 
-    avg_volat = {}
+    volats = {}
 
     for datetime, body in zip(sliced_df[Col.DATETIME], sliced_df[Col.BODY]):
         if meta.timeframe == Timeframe.D1:
@@ -29,15 +30,17 @@ for slice_set in range(N_SLICE):
         else:
             chunk_key = utils.time.hour_minute_str(datetime)
 
-        if not chunk_key in avg_volat:
-            avg_volat[chunk_key] = []
+        if not chunk_key in volats:
+            volats[chunk_key] = []
 
-        avg_volat[chunk_key].append(abs(body))
+        volats[chunk_key].append(abs(body))
 
-    avg_volat = utils.arith.avg_dict(avg_volat)
-    avg_volat = utils.arith.sorted_dict(avg_volat)
-    avg_dicts.append(avg_volat)
-    
-plotting.plot_dict_as_line(avg_dicts, f"Average volatility {target_quote} {target_timeframe} ({N_SLICE} slices from {N_YEAR} years)")
+    volats = utils.arith.sorted_dict(volats)
+    dicts.append(volats)
+
+plotting.plot_dicts_as_stacked_ribbons_of_median(dicts, 0.1, f"Median volatility {target_quote} {target_timeframe} ({N_SLICE} slices from {N_YEAR} years) (err={0.1})")
+merged_dicts = utils.arith.sorted_dict(utils.arith.merge_dict_of_lists(dicts))
+plotting.plot_dicts_as_stacked_ribbons_of_median(merged_dicts, 0.25, f"Median volatility {target_quote} {target_timeframe} ({N_YEAR} years) (err={0.25})")
+
 
 plotting.block()
