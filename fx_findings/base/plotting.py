@@ -46,11 +46,12 @@ def plot_dict_as_line(d, title="", min_value=0, block=False):
     plt.title(title)
     plt.grid(axis='y')
     if type(d) is list:
-        for _d in d:
-            plt.plot(list(_d.values()))
+        for i, _d in enumerate(d):
+            plt.plot(list(_d.values()), label=str(i))
         d = d[0]
     else:
         plt.plot(list(d.values()))
+    plt.legend()
     plt.xticks(range(len(d.values())), list(d.keys()), rotation=90)
     plt.ylim(bottom = 0)
     plt.tight_layout()
