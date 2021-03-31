@@ -57,7 +57,7 @@ def plot_dict_as_line(d, title="", min_value=0, block=False):
     plt.tight_layout()
     plt.show(block=block)
 
-def plot_dicts_as_stacked_ribbons(d, title="", min_value=0, block=False):
+def plot_dicts_as_stacked_ribbons_of_median(d, error_percent=0.1, title="", min_value=0, block=False):
     plt.figure()
     plt.title(title)
     plt.grid(axis='y')
@@ -72,10 +72,10 @@ def plot_dicts_as_stacked_ribbons(d, title="", min_value=0, block=False):
 
         for key, value in _d.items():
             sorted_val = sorted(value)
-            size_val = len(value)
-            i_25 = int((size_val-1)*0.4)
-            i_50 = int((size_val-1)*0.5)
-            i_75 = int((size_val-1)*0.6)
+            max_index = len(value)-1
+            i_25 = int(max_index*(0.5 - error_percent))
+            i_50 = int(max_index*0.5)
+            i_75 = int(max_index*(0.5 + error_percent))
             v_25 = sorted_val[i_25]
             v_50 = sorted_val[i_50]
             v_75 = sorted_val[i_75]
@@ -87,8 +87,8 @@ def plot_dicts_as_stacked_ribbons(d, title="", min_value=0, block=False):
         clr_fill = 'C1'
         label = str(i)
         # plt.plot(range(len(_d)), line_25, clr_mean, linewidth=0.15)
-        plt.plot(range(len(_d)), line_50, clr_mean, label=label, linewidth=0.5)
         # plt.plot(range(len(_d)), line_75, clr_mean, linewidth=0.15)
+        plt.plot(range(len(_d)), line_50, clr_mean, label=label, linewidth=0.5)
         plt.fill_between(range(len(_d)), line_25, line_75, color=clr_fill,alpha = 0.1)
         
     d = d[0]
