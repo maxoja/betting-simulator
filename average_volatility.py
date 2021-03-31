@@ -5,8 +5,8 @@ from fx_findings.base import utils
 from fx_findings.base.enums import Quote, Timeframe, Col
 from fx_findings.base import plotting
 
-N_YEAR = 1
-N_SLICE = 3
+N_YEAR = 2
+N_SLICE = 4
 
 target_timeframe = Timeframe(sys.argv[1])
 target_quote = Quote(sys.argv[2])
