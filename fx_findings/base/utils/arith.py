@@ -13,6 +13,18 @@ def sorted_dict(d):
     return { k:d[k] for k in sorted(d.keys()) }
 
 
+def merge_dict_of_lists(dicts):
+    result = {}
+    for d in dicts:
+        for k, v in d.items():
+            if not k in result:
+                result[k] = v
+            else:
+                result[k] += v
+    return result
+
+
+
 def shift_right_with_nan(a):
     a = np.concatenate(([np.NaN], a))
     a = a[:-1]
