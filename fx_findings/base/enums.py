@@ -10,6 +10,11 @@ class Timeframe(str, Enum):
     M15 = 'M15'
     M20 = 'M20'
 
+    def daily_or_larger(self):
+        if 'D' in self:
+            return True
+        return False
+
 class Quote(str, Enum):
     AUDCAD = 'AUDCAD'
     AUDCHF = 'AUDCHF'

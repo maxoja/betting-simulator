@@ -13,6 +13,7 @@ target_quote = Quote(sys.argv[2])
 target_broker = None
 
 df, meta = loader.load_price_dataset(target_timeframe, target_quote, target_broker)
+print(df[:10])
 n_bar = N_YEAR*utils.market.annual_bars(meta.timeframe)//N_SLICE
 n_shift = n_bar
 
@@ -25,7 +26,7 @@ for slice_set in range(N_SLICE):
     volats = {}
 
     for datetime, body in zip(sliced_df[Col.DATETIME], sliced_df[Col.BODY]):
-        if meta.timeframe == Timeframe.D1:
+        if meta.timeframe.daily_or_larger():
             chunk_key = utils.time.weekday_str(datetime)
         else:
             chunk_key = utils.time.hour_minute_str(datetime)
@@ -37,6 +38,8 @@ for slice_set in range(N_SLICE):
 
     volats = utils.arith.sorted_dict(volats)
     dicts.append(volats)
+
+print(dicts)
 
 plotting.plot_dicts_as_stacked_ribbons_of_median(dicts, 0.1, f"Median volatility {target_quote} {target_timeframe} ({N_SLICE} slices from {N_YEAR} years) (err={0.1})")
 merged_dicts = utils.arith.sorted_dict(utils.arith.merge_dict_of_lists(dicts))
