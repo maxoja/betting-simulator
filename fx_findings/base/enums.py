@@ -1,12 +1,19 @@
 from enum import Enum, auto, IntEnum
 
 class Timeframe(str, Enum):
+    D3 = 'D3'
+    D2 = 'D2'
     D1 = 'D1'
     H4 = 'H4'
     H1 = 'H1'
     M5 = 'M5'
     M15 = 'M15'
     M20 = 'M20'
+
+    def daily_or_larger(self):
+        if 'D' in self:
+            return True
+        return False
 
 class Quote(str, Enum):
     AUDCAD = 'AUDCAD'
