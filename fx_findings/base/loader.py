@@ -1,5 +1,6 @@
 import os
 import pandas
+import numpy as np
 from .enums import Timeframe, Quote, Broker, Col
 from . import utils
 
@@ -24,6 +25,15 @@ def load_price_dataset(timeframe:Timeframe, quote:Quote, broker:Broker=None):
         else:
             return cache[cache_key].copy(), meta
     
+    if timeframe == Timeframe.D2:
+        grouping = 2
+        timeframe = Timeframe.D1
+    elif timeframe == Timeframe.D3:
+        grouping = 3
+        timeframe = Timeframe.D1
+    else:
+        grouping = None
+    
     directory = f'data/{timeframe}/{quote}'
 
     if not broker is None:
@@ -37,13 +47,51 @@ def load_price_dataset(timeframe:Timeframe, quote:Quote, broker:Broker=None):
             else:
                 dataframe = pandas.read_csv(filepath, sep='\t', parse_dates={'<DATETIME>':[0,1]}, infer_datetime_format=True)
             
+            if not grouping is None:
+                print(dataframe.shape)
+                _group_up_candles(dataframe, meta, grouping)
+                print(dataframe.shape)  
             _destructure_candles(dataframe, meta)
+
             cache[cache_key] = dataframe.copy()
             return dataframe, meta
 
     cache[cache_key] = None
     return None, meta
 
+def _group_up_candles(df, df_meta:Meta, grouping:int):
+    num_row = df.shape[0]
+    remainder = num_row % grouping
+
+    if remainder != 0:
+        df.drop(np.arange(num_row-remainder,num_row), inplace=True)
+        num_row = df.shape[0]
+
+    if num_row == 0:
+        return
+
+    print(df[:grouping*2])
+
+    for i in range(0, num_row, grouping):
+        o = df.iloc[i][Col.OPEN]
+        c = df.iloc[i+grouping-1][Col.CLOSE]
+        h = max(df.iloc[i:i+grouping][Col.HIGH])
+        l = min(df.iloc[i:i+grouping][Col.LOW])
+        v = sum(df.iloc[i:i+grouping][Col.VOL])
+        s = max(df.iloc[i:i+grouping][Col.SPREAD])
+
+        next_i = i//grouping
+        df.iloc[next_i, df.columns.get_loc(Col.DATETIME)] = df.iloc[i][Col.DATETIME]
+        df.iloc[next_i, df.columns.get_loc(Col.OPEN)] = o
+        df.iloc[next_i, df.columns.get_loc(Col.CLOSE)] = c
+        df.iloc[next_i, df.columns.get_loc(Col.HIGH)] = h
+        df.iloc[next_i, df.columns.get_loc(Col.LOW)] = l
+        df.iloc[next_i, df.columns.get_loc(Col.VOL)] = v
+        df.iloc[next_i, df.columns.get_loc(Col.SPREAD)] = s
+    
+    print(df[:grouping*2])
+    
+    df.drop(np.arange(num_row//grouping, num_row), inplace=True)
 
 def _destructure_candles(df, df_meta:Meta):
     point_size = utils.market.point_size(df_meta.quote)
